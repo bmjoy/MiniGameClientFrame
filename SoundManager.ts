@@ -35,7 +35,7 @@ export class SoundManager {
         } else {
             loop = true;
         }
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+        if (url.indexOf("http") == 0 && cc.sys.platform == cc.sys.WECHAT_GAME) {
             if (!this._bgmAudioContext) {
                 this._bgmAudioContext = wx.createInnerAudioContext();
             }
@@ -43,14 +43,22 @@ export class SoundManager {
             this._bgmAudioContext.src = url;
             this._bgmAudioContext.loop = loop;
             this._bgmAudioContext.play();
-        } else {
-            cc.loader.load(url, function (err, clip) {
+        } else if (url.indexOf("http") == 0) {
+            cc.loader.load(url, (err, clip: cc.AudioClip) => {
                 if (!err) {
                     Utils.LOGE(this.TAG, "play music error : " + url);
                 } else {
                     this._bgmAudioId = cc.audioEngine.playMusic(clip, true);
                 }
-            }.bind(this));
+            });
+        } else {
+            cc.loader.loadRes(url, (err, clip: cc.AudioClip) => {
+                if (err) {
+                    Utils.LOGE(this.TAG, "play music error : " + url);
+                } else {
+                    this._bgmAudioId = cc.audioEngine.playMusic(clip, true);
+                }
+            })
         }
     }
 
@@ -62,7 +70,7 @@ export class SoundManager {
             Utils.LOGE(this.TAG, "effect sound address is invalid");
             return;
         }
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+        if (url.indexOf("http") == 0 && cc.sys.platform == cc.sys.WECHAT_GAME) {
             var effectContext: wx.InnerAudioContext = null;
             if (this._recyclePool.length == 0) {
                 effectContext = wx.createInnerAudioContext();
@@ -71,20 +79,28 @@ export class SoundManager {
             }
             effectContext.src = url;
             effectContext.loop = false;
-            effectContext.onStop(function () {
-                effectContext.offStop(function () {
+            effectContext.onStop(() => {
+                effectContext.offStop(() => {
                     Utils.LOGD(this.TAG, "off stop success");
-                }.bind(this));
+                });
                 this._recyclePool.push(effectContext);
-            }.bind(this));
-        } else {
-            cc.loader.load(url, function (err: any, clip: cc.AudioClip) {
+            });
+        } else if (url.indexOf("http") == 0) {
+            cc.loader.load(url, (err: any, clip: cc.AudioClip) => {
                 if (err) {
                     Utils.LOGE(this.TAG, "play effect error : " + url);
                 } else {
                     cc.audioEngine.playEffect(clip, false);
                 }
-            }.bind(this));
+            });
+        } else {
+            cc.loader.loadRes(url, (err: any, clip: cc.AudioClip) => {
+                if (err) {
+                    Utils.LOGE(this.TAG, "play effect error : " + url);
+                } else {
+                    cc.audioEngine.playEffect(clip, false);
+                }
+            })
         }
     }
 
