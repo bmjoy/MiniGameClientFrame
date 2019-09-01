@@ -7,21 +7,47 @@
 
 import { Utils } from "./Utils";
 
+const KEY_STORAGE_MUSIC_STATUS: string = "KEY_STORAGE_MUSIC_STATUS";
+const KEY_STORAGE_EFFECT_STATUS: string = "KEY_STORAGE_EFFECT_STATUS";
+const KEY_STORAGE_MUTE_STATUS: string = "KEY_STORAGE_MUTE_STATUS";
+
 export class SoundManager {
-    private static readonly _instance: SoundManager = new SoundManager();
+    
     private readonly TAG: string = "SoundManager";
+    private static _instance: SoundManager = null;
     private _bgmAudioId: number = -1;
     private _isStopEffect: boolean = false;
+    private _isStopMusic: boolean = false;
     private _mute: boolean = false;
 
     private constructor() {
-        if (SoundManager.getInstance()) {
-            Utils.LOGE(this.TAG, "重复初始化");
-        }
+        
     }
 
     public static getInstance(): SoundManager {
+        if (this._instance == null) {
+            this._instance = new SoundManager();
+            this._instance.initStatus();
+        }
         return this._instance;
+    }
+
+    /**
+     * 初始化音效状态
+     */
+    protected initStatus() {
+        let musicStatus: string = Utils.getStorageSync(KEY_STORAGE_MUSIC_STATUS, "0");
+        if (musicStatus == "1") {
+            this._isStopMusic = true;
+        }
+        let effectStatus: string = Utils.getStorageSync(KEY_STORAGE_EFFECT_STATUS, "0");
+        if (effectStatus == "1") {
+            this._isStopEffect = true;
+        }
+        let muteStatus: string = Utils.getStorageSync(KEY_STORAGE_MUTE_STATUS, "0");
+        if (muteStatus == "1") {
+            this._mute = true;
+        }
     }
 
     /**
@@ -32,14 +58,27 @@ export class SoundManager {
     }
 
     /**
+     * 是否关闭音乐
+     */
+    public isStopMusic() {
+        return this._isStopMusic;
+    }
+
+    /**
+     * 是否关闭音效
+     */
+    public isStopEffect() {
+        return this._isStopEffect;
+    }
+
+    /**
      * 播放音乐
      * @param url 
      * @param loop 
      */
     public playMusic(url: string, loop: boolean = true) {
-        if (!url || this._mute) {
+        if (!url) {
             Utils.LOGE(this.TAG, "music address is invalid");
-            return;
         }
         this.stopMusic();
         if (url.indexOf("http") == 0) {
@@ -47,7 +86,10 @@ export class SoundManager {
                 if (!err) {
                     Utils.LOGE(this.TAG, "play music error : " + url);
                 } else {
-                    this._bgmAudioId = cc.audioEngine.playMusic(clip, true);
+                    this._bgmAudioId = cc.audioEngine.playMusic(clip, loop);
+                    if (this._isStopMusic || this._mute) {
+                        this.pauseMusic();
+                    }
                 }
             });
         } else {
@@ -55,7 +97,10 @@ export class SoundManager {
                 if (err) {
                     Utils.LOGE(this.TAG, "play music error : " + url);
                 } else {
-                    this._bgmAudioId = cc.audioEngine.playMusic(clip, true);
+                    this._bgmAudioId = cc.audioEngine.playMusic(clip, loop);
+                    if (this._isStopMusic || this._mute) {
+                        this.pauseMusic();
+                    }
                 }
             })
         }
@@ -66,7 +111,7 @@ export class SoundManager {
      * @param url 
      */
     public playEffectSound(url) {
-        if (this._isStopEffect || this._mute) {
+        if (this._mute || this._isStopEffect) {
             return;
         }
         if (!url) {
@@ -121,10 +166,29 @@ export class SoundManager {
     }
 
     /**
-     * 停止音效
+     * 关闭音乐
+     */
+    public closeMusic() {
+        this._isStopMusic = true;
+        Utils.setStorage(KEY_STORAGE_MUSIC_STATUS, "1", true);
+        this.pauseMusic();
+    }
+
+    /**
+     * 开启音乐
+     */
+    public openMusic() {
+        this._isStopMusic = false;
+        Utils.setStorage(KEY_STORAGE_MUSIC_STATUS, "0", true);
+        this.resumeMusic();
+    }
+
+    /**
+     *  关闭音效
      */
     public closeEffect() {
         this._isStopEffect = true;
+        Utils.setStorage(KEY_STORAGE_EFFECT_STATUS, "1", true);
         cc.audioEngine.stopAllEffects();
     }
 
@@ -133,6 +197,7 @@ export class SoundManager {
      */
     public openEffect() {
         this._isStopEffect = false;
+        Utils.setStorage(KEY_STORAGE_EFFECT_STATUS, "0", true);
     }
 
     /**
@@ -142,6 +207,7 @@ export class SoundManager {
         this._mute = true;
         cc.audioEngine.stopAllEffects();
         this.pauseMusic();
+        Utils.setStorage(KEY_STORAGE_MUTE_STATUS, "1");
     }
 
     /**
@@ -150,5 +216,6 @@ export class SoundManager {
     public unmute() {
         this._mute = false;
         this.resumeMusic();
+        Utils.setStorage(KEY_STORAGE_MUTE_STATUS, "0");
     }
 }

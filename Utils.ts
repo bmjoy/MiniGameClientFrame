@@ -5,8 +5,6 @@
  * Copyright (c) 2018 刘虎
 ================================================================*/
 
-import { SoundManager } from "./SoundManager";
-
 export class Utils {
 
     private static readonly TAG: string = "Utils";
@@ -38,14 +36,6 @@ export class Utils {
             return 1;
         }
         return -1;
-    }
-
-    public static playMusic(url: string): void {
-        SoundManager.getInstance().playMusic(url);
-    }
-
-    public static playEffectSound(url: string): void {
-        SoundManager.getInstance().playMusic(url);
     }
 
     public static LOGD(tag: string, msg?: any): void {
@@ -83,7 +73,7 @@ export class Utils {
 
     public static setStorage(key: string, value: any, isSync?: boolean, cb?: { success?: () => void, fail?: () => void, complete?: () => void }): void {
         try {
-            if (value instanceof Number || value instanceof String || value instanceof Boolean) {
+            if (typeof value == "number" || typeof value == "string" || typeof value == "boolean") {
                 value = value;
             } else if (value instanceof Array || value instanceof Object) {
                 value = JSON.stringify(value);

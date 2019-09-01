@@ -9,6 +9,7 @@ import { NotificationCenter } from "./NotificationCenter";
 import { Utils } from "./Utils";
 import { SpriteManager } from "./SpriteManager";
 import { SceneManager } from "./SceneManager";
+import { SoundManager } from "./SoundManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -228,15 +229,15 @@ export class FrameworkObject extends cc.Object {
      * @param url 
      */
     protected playEffect(url: string): void {
-        Utils.playEffectSound(url);
+        SoundManager.getInstance().playEffectSound(url);
     }
 
     /**
      * 播放音效
      * @param url 
      */
-    protected playMusic(url: string): void {
-        Utils.playMusic(url);
+    protected playMusic(url: string, loop: boolean = true): void {
+        SoundManager.getInstance().playMusic(url, loop);
     }
 
     /**
@@ -244,14 +245,14 @@ export class FrameworkObject extends cc.Object {
      * @param url 
      */
     protected static playEffect(url: string): void {
-        Utils.playEffectSound(url);
+        SoundManager.getInstance().playEffectSound(url);
     }
 
     /**
      * 播放背景音效
      * @param url 
      */
-    protected static playMusic(url: string): void {
-        Utils.playMusic(url);
+    protected static playMusic(url: string, loop: boolean = true): void {
+        SoundManager.getInstance().playMusic(url, loop);
     }
 }
