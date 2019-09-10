@@ -8,7 +8,7 @@
 import { NotificationCenter } from "./NotificationCenter";
 import { Utils } from "./Utils";
 import { SpriteManager } from "./SpriteManager"
-import { SceneManager } from "./SceneManager";
+import { SceneManager, ChangeSceneResult } from "./SceneManager";
 import { SoundManager } from "./SoundManager";
 
 const { ccclass, property } = cc._decorator;
@@ -76,8 +76,8 @@ export class FrameworkComponent extends cc.Component {
      * @param from 
      * @param to 
      */
-    protected changeScene(from: string, to: string) {
-        SceneManager.getInstance().changeScene(from, to);
+    protected changeScene(from: string, to: string, onBeforeLoadScene?: () => void, onLaunched?: () => void, fail?: (res: ChangeSceneResult) => void, progress?: (completed: number, total: number, item: any) => void) {
+        SceneManager.getInstance().changeScene(from, to, onBeforeLoadScene, onLaunched, fail, progress);
     }
     
     /**

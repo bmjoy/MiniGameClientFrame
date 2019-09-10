@@ -30,7 +30,7 @@ export class SceneManager {
     private static instance: SceneManager = new SceneManager();
     private sceneParmas: SceneParams[] = null;
     private hasInit: boolean = false;
-    private curSceneName: string = null;
+    private _curSceneName: string = null;
 
     private constructor() {
         if (SceneManager.getInstance()) {
@@ -50,16 +50,20 @@ export class SceneManager {
         this.hasInit = true;
         for (let i = 0; i < params.length; i++) {
             if (currSceneName == params[i].from) {
-                this.curSceneName = currSceneName;
+                this._curSceneName = currSceneName;
                 break;
             }
         }
-        (this.curSceneName == null) && Utils.LOGE(this.TAG, "current scene not find in params");
+        (this._curSceneName == null) && Utils.LOGE(this.TAG, "current scene not find in params");
     }
 
-    public changeScene(from: string, to: string, onLaunched?: () => void, fail?: (res: ChangeSceneResult) => void, progress?: (completed: number, total: number, item: any) => void): void {
+    public changeScene(from: string, to: string, onBeforeLoadScene?: () => void, onLaunched?: () => void, fail?: (res: ChangeSceneResult) => void, progress?: (completed: number, total: number, item: any) => void): void {
         if (!this.hasInit) {
             Utils.LOGE(this.TAG, "You should call init method before calling changeScene method");
+            return;
+        }
+        if (this._curSceneName != from) {
+            Utils.LOGE(this.TAG, "current scene is " + this._curSceneName + " is not " + from);
             return;
         }
         for (let i = 0; i < this.sceneParmas.length; i++) {
@@ -67,11 +71,13 @@ export class SceneManager {
             if (from == params.from) {
                 for (let j = 0; j < params.to.length; j++) {
                     if (to == params.to[j]) {
+                        onBeforeLoadScene && onBeforeLoadScene();
                         cc.director.preloadScene(params.to[j], progress, (error: Error, asset: cc.SceneAsset) => {
                             if (error) {
                                 fail && fail({ errMsg: "load scene res error", code: ChangeSceneResultCode.LOAD_SCENE_RES_ERROR });
                             } else {
-                                cc.director.runSceneImmediate(asset.scene, onLaunched);
+                                cc.director.loadScene(params.to[j], onBeforeLoadScene);
+                                this._curSceneName = to;
                             }
                         });
                         return;
