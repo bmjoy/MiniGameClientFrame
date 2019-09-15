@@ -188,6 +188,34 @@ declare namespace wx {
     export function getSetting(cb: BaseCallback): void; // 获取用户的当前设置
     export function createUserInfoButton(params: CreateUserInfoButtonParams): UserInfoButton;
     export function getUserInfo(cb: GetUserInfoParams): void; //获取用户数据
+
+    //--转发
+    export interface ShowShareMenuParams extends BaseCallback {
+        withShareTicket?: boolean,
+    }
+    export interface UpdateShareMenuParams extends ShowShareMenuParams {
+        isUpdatableMessage?: boolean,
+        activityId?: string,
+        templateInfo?: { name: string, value: string }[]
+    }
+    export interface ShareAppMessageParams {
+        title?: string,
+        imageUrl?: string,
+        query?: string,
+        imageUrlId?: string
+    }
+    export interface GetShareInfoParams extends BaseCallback {
+        shareTicket: string,
+        timeout?: number
+    }
+    export function updateShareMenu(params?: UpdateShareMenuParams);
+    export function showShareMenu(params?: ShowShareMenuParams);
+    export function shareAppMessage(params?: ShareAppMessageParams);
+    export function onShareAppMessage(cb: () => ShareAppMessageParams);
+    export function offShareAppMessage(cb: () => ShareAppMessageParams);
+    export function hideShareMenu(params?: BaseCallback);
+    export function getShareInfo(params: GetShareInfoParams);
+
 }
 
 
