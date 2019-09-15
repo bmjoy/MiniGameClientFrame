@@ -76,7 +76,7 @@ export class SceneManager {
                             if (error) {
                                 fail && fail({ errMsg: "load scene res error", code: ChangeSceneResultCode.LOAD_SCENE_RES_ERROR });
                             } else {
-                                cc.director.loadScene(params.to[j], onBeforeLoadScene);
+                                cc.director.loadScene(params.to[j], onLaunched);
                                 this._curSceneName = to;
                             }
                         });
