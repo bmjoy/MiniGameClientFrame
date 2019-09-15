@@ -124,15 +124,28 @@ export class Utils {
         });
     }
 
-    public static isAuthor(cb?: (authorize: boolean)=>void) {
-        wx.getSetting({
-            success: (res: any) => {
-                cb && cb(res.authSetting["scope.userInfo"]);
-            },
-            fail: (res: any) => {
-                this.LOGE(this.TAG, JSON.stringify(res));
-            }
-        });
+    public static isAuthorWechat(type: "userInfo" | "userLocation" | "werun" | "writePhotosAlbum", cb?: (authorize: boolean)=>void) {
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            wx.getSetting({
+                success: (res: any) => {
+                    cb && type === "userInfo" && cb(res.authSetting["scope.userInfo"]);
+                    cb && type === "userLocation" && cb(res.authSetting["scope.userLocation"]);
+                    cb && type === "werun" && cb(res.authSetting["scope.werun"]);
+                    cb && type === "writePhotosAlbum" && cb(res.authSetting["scope.writePhotosAlbum"]);
+                },
+                fail: (res: any) => {
+                    this.LOGE(this.TAG, JSON.stringify(res));
+                }
+            });
+        } else {
+            this.LOGW(this.TAG, "不是微信平台");
+        }
+    }
+
+    public static getUserInfoWechat(cb: wx.GetUserInfoParams) {
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            wx.getUserInfo(cb);
+        }
     }
 
     public static formateStr(str: string, maxLength: number): string {
