@@ -19,6 +19,8 @@ export default class AuthComponent extends FrameworkComponent {
     protected authBtn: any = null;
     @property(cc.Boolean)
     canRefuse: boolean = false;
+    @property(cc.String)
+    imgStr: string = null;
 
     onLoad() {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
@@ -68,13 +70,13 @@ export default class AuthComponent extends FrameworkComponent {
     protected createAuthBtn() {
         this.authBtn = wx.createUserInfoButton({
             type: "image",
-            image: "https://szh5.nalrer.cn/szmahjong/WXGames/Shousi/authorizeBtn.png",
+            image: this.imgStr ? this.imgStr : "https://szh5.nalrer.cn/szmahjong/WXGames/Shousi/authorizeBtn.png",
             style: {
                 left: 0,
                 top: 0,
                 width: 0,
                 height: 0,
-                backgroundColor: '#ff0000',
+                backgroundColor: '#ffffff',
                 borderColor: '#ffffff',
                 borderWidth: 0,
                 borderRadius: 4,
