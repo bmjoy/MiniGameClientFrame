@@ -31,18 +31,26 @@ export class WechatShare extends FrameworkObject {
     }
 
     public static onShareAppMessage(cb: () => wx.ShareAppMessageParams) {
-        wx.onShareAppMessage(cb);
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            wx.onShareAppMessage(cb);
+        }
     }
 
     public static offShareAppMessage(cb: () => wx.ShareAppMessageParams) {
-        wx.offShareAppMessage(cb);
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            wx.offShareAppMessage(cb);
+        }
     }
 
     public static hideShareMenu(params?: wx.BaseCallback) {
-        wx.hideShareMenu(params);
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            wx.hideShareMenu(params);
+        }
     }
 
     public static getShareInfo(params: wx.GetShareInfoParams) {
-        wx.getShareInfo(params);
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            wx.getShareInfo(params);
+        }
     }
 }
