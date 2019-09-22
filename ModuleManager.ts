@@ -65,6 +65,9 @@ export class ModuleManager extends FrameworkObject {
             return;
         }
         let moudleStruct = this.modules.get(moduleName);
+        if ("function" === typeof moudleStruct.moduleCtr["onDestroy"]) {
+            moudleStruct.moduleCtr["onDestroy"]();
+        }
         if ("function" === typeof moudleStruct.moduleCtr.destroy) {
             moudleStruct.moduleCtr.destroy();
         }
