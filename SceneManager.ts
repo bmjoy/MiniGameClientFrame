@@ -24,7 +24,7 @@ export interface ChangeSceneResult {
     code: ChangeSceneResultCode
 }
 
-export class SceneManager {
+export class SceneManager extends cc.Object {
 
     private readonly TAG: string = "SceneManager";
     private static instance: SceneManager = new SceneManager();
@@ -33,6 +33,7 @@ export class SceneManager {
     private _curSceneName: string = null;
 
     private constructor() {
+        super();
         if (SceneManager.getInstance()) {
             Utils.LOGE(this.TAG, "重复初始化");
         }

@@ -7,9 +7,10 @@
 
 import {Utils} from "./Utils";
 
-export class CommonEvent {
+export class CommonEvent extends cc.Object {
     public readonly TAG: string = "CommonEvent";
     private constructor() {
+        super();
         Utils.LOGE(this.TAG, "不需要实例化");
     }
     public static readonly COMMON_EVENT_GAME_ON_SHOW: string = "COMMON_EVENT_GAME_ON_SHOW";

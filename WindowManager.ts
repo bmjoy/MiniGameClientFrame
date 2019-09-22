@@ -10,7 +10,7 @@ import { FrameworkObject } from "./FrameworkObject";
 interface WindowInfo {
     node?: cc.Node;
     prefabPath: string;
-    component: { prototype: cc.Component };
+    component: new () => cc.Component;
     hasShow: boolean
     params?: OpenWindowParams;
 }
@@ -52,7 +52,7 @@ export class WindowManager extends FrameworkObject {
      * @param component 
      * @param params 
      */
-    public openWindow<T extends cc.Component>(prefabPath: string, component: { prototype: T }, params?: OpenWindowParams) {
+    public openWindow<T extends cc.Component>(prefabPath: string, component: new () => T, params?: OpenWindowParams) {
         if (!cc.isValid(this._maskNode)) {
             this.createMaskNode();
         }
@@ -86,12 +86,12 @@ export class WindowManager extends FrameworkObject {
      * 关闭窗口
      * @param component 
      */
-    public closeWindow<T extends cc.Component>(component: { prototype: T }) {
+    public closeWindow<T extends cc.Component>(component: new () => T) {
         for (let index = 0, length = this._windowList.length; index < length; index++) {
             let windowInfo = this._windowList[index];
             if (windowInfo.component === component && windowInfo.hasShow) {
                 let script = windowInfo.node.getComponent(component);
-                script && script["willDestroy"] && script["willDestroy"]();
+                script && typeof script["willDestroy"] === "function" && script["willDestroy"]();
                 this._windowList.splice(index, 1);
                 windowInfo.node.destroy();
                 this.checkShowWindow();
@@ -134,11 +134,11 @@ export class WindowManager extends FrameworkObject {
                 windowInfo.node = cc.instantiate(cc.loader.getRes(windowInfo.prefabPath));
                 this.adjustIndex();
                 let script = windowInfo.node.getComponent(windowInfo.component);
-                script&&script["willShow"] && script["willShow"]();
-                script&&script["initData"] && script["initData"](windowInfo.params && windowInfo.params.data);
+                script && typeof script["willShow"] === "function" && script["willShow"]();
+                script && typeof script["initData"] === "function" && script["initData"](windowInfo.params && windowInfo.params.data);
                 cc.director.getScene().addChild(windowInfo.node);
                 windowInfo.hasShow = true;
-                script&&script["showed"] && script["showed"]();
+                script && typeof script["showed"] === "function" && script["showed"]();
             } else {
                 cc.loader.loadRes(windowInfo.prefabPath, cc.Prefab, (completedCount: number, totalCount: number, item: any) => {
 
@@ -148,11 +148,11 @@ export class WindowManager extends FrameworkObject {
                             windowInfo.node = cc.instantiate(prefab);
                             this.adjustIndex();
                             let script = windowInfo.node.getComponent(windowInfo.component);
-                            script&&script["willShow"] && script["willShow"]();
-                            script&&script["initData"] && script["initData"](windowInfo.params && windowInfo.params.data);
+                            script && typeof script["willShow"] === "function" && script["willShow"]();
+                            script && typeof script["initData"] === "function" && script["initData"](windowInfo.params && windowInfo.params.data);
                             cc.director.getScene().addChild(windowInfo.node);
                             windowInfo.hasShow = true;
-                            script&&script["showed"] && script["showed"]();
+                            script && typeof script["showed"] === "function" && script["showed"]();
                         }
                     } else {
                         this.LOGE(this.TAG, windowInfo.prefabPath + " error: " + JSON.stringify(err));

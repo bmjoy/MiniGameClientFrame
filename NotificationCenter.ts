@@ -12,12 +12,13 @@ interface NotificationHandler {
     target: any
 }
 
-export class NotificationCenter {
+export class NotificationCenter extends cc.Object {
 
     private readonly TAG: string = "NotificationCenter";
     private static readonly instance: NotificationCenter = new NotificationCenter();
     private _events: { [key: string]: Array<NotificationHandler> } = {};
     private constructor() {
+        super();
         if (NotificationCenter.getInstance()) {
             Utils.LOGE(this.TAG, "重复初始化");
         }

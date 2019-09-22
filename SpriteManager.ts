@@ -7,13 +7,14 @@
 
 import { Utils } from "./Utils";
 
-export class SpriteManager {
+export class SpriteManager extends cc.Object {
 
     private readonly TAG: string = "NotificationCenter";
     private static readonly instance: SpriteManager = new SpriteManager();
     private spriteFrameContent: {[key: string]: cc.SpriteFrame} = {};
 
     private constructor() {
+        super();
         if (SpriteManager.getInstance()) {
             Utils.LOGE(this.TAG, "重复初始化");
         }

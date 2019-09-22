@@ -10,12 +10,22 @@ import { Utils } from "./Utils";
 import { SpriteManager } from "./SpriteManager";
 import { SceneManager, ChangeSceneResult } from "./SceneManager";
 import { SoundManager } from "./SoundManager";
+import { FrameworkBehavior } from "./FrameworkBehavior";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export class FrameworkObject extends cc.Object {
-    
+
+    /**
+     * 绑定函数
+     * @param Behavior
+     */
+    public bindBehavior<A extends FrameworkBehavior>(Behavior: new () => A) {
+        let behavior: FrameworkBehavior = new Behavior();
+        behavior.autoBindFunction(this);
+    }
+
     /**
      * 监听指定事件
      * @param event 
@@ -73,7 +83,7 @@ export class FrameworkObject extends cc.Object {
     protected static ignore(event: string, cb: (res?: any) => void, target?: any): void {
         NotificationCenter.ignore(event, cb, target);
     }
-    
+
     /**
      * 取消指定对象的所有监听事件
      * @param target 

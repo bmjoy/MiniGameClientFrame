@@ -10,11 +10,21 @@ import { Utils } from "./Utils";
 import { SpriteManager } from "./SpriteManager"
 import { SceneManager, ChangeSceneResult } from "./SceneManager";
 import { SoundManager } from "./SoundManager";
+import { FrameworkBehavior } from "./FrameworkBehavior";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export class FrameworkComponent extends cc.Component {
+
+    /**
+     * 绑定函数
+     * @param Behavior
+     */
+    protected bindBehavior<A extends FrameworkBehavior>(Behavior: new() => A) {
+        let behavior: FrameworkBehavior = new Behavior();
+        behavior.autoBindFunction(this);
+    }
 
     /**
      * 监听指定事件

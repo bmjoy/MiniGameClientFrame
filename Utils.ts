@@ -5,10 +5,11 @@
  * Copyright (c) 2018 刘虎
 ================================================================*/
 
-export class Utils {
+export class Utils extends cc.Object {
 
     private static readonly TAG: string = "Utils";
     private constructor() {
+        super();
         Utils.LOGE(Utils.TAG, "不需要初始化");
     }
 

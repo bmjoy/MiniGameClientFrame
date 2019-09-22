@@ -11,7 +11,7 @@ const KEY_STORAGE_MUSIC_STATUS: string = "KEY_STORAGE_MUSIC_STATUS";
 const KEY_STORAGE_EFFECT_STATUS: string = "KEY_STORAGE_EFFECT_STATUS";
 const KEY_STORAGE_MUTE_STATUS: string = "KEY_STORAGE_MUTE_STATUS";
 
-export class SoundManager {
+export class SoundManager extends cc.Object {
     
     private readonly TAG: string = "SoundManager";
     private static _instance: SoundManager = null;
@@ -21,7 +21,7 @@ export class SoundManager {
     private _mute: boolean = false;
 
     private constructor() {
-        
+        super();
     }
 
     public static getInstance(): SoundManager {

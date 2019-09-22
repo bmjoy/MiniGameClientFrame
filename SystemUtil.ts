@@ -11,13 +11,14 @@ interface SystemInfo extends wx.SystemInfo {
 
 }
 
-export class SystemUtil {
+export class SystemUtil extends cc.Object {
 
     private readonly TAG: string = "SystemUtil";
     protected static readonly _instance: SystemUtil = new SystemUtil();
     protected _systemInfo: SystemInfo;
 
     private constructor() {
+        super();
         if (SystemUtil.getInstance()) {
             Utils.LOGE(this.TAG, "重复初始化");
         }

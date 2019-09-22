@@ -20,7 +20,7 @@ export default class AuthComponent extends FrameworkComponent {
     @property(cc.Boolean)
     canRefuse: boolean = false;
     @property(cc.String)
-    imgStr: string = null;
+    imgStr: string = "";
 
     onLoad() {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
