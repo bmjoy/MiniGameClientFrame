@@ -13,7 +13,7 @@ export interface HttpBaseParams {
     data?: string | { [key: string]: any },
     header?: { [name: string]: string },
     method?: "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "TRACE" | "CONNECT",  //default GET 
-    dataType?: string,                                                          //default json
+    dataType?: "json" | "arraybuffer",                                          //default json
     responseType?: string,                                                      //default text
     timeout?: number,
     success?: (res: any) => void,
@@ -115,14 +115,8 @@ export class NetworkHttp extends FrameworkObject {
             }
             xhr.timeout = params.timeout || 30000;
             xhr.responseType = "json";
-            if (params.dataType && params.dataType == "text") {
-                xhr.responseType = "text";
-            } else if (params.dataType && params.dataType == "document") {
-                xhr.responseType = "document";
-            } else if (params.dataType && params.dataType == "arraybuffer") {
+            if (params.dataType && params.dataType == "arraybuffer") {
                 xhr.responseType = "arraybuffer";
-            } else if (params.dataType && params.dataType == "blob") {
-                xhr.responseType = "blob";
             }
             if (params.data) {
                 xhr.send(<Document>params.data);

@@ -7,25 +7,52 @@
 
 declare namespace wx {
 
+    // --基本数据结构
+    interface RenderingContext {
+
+    }
     interface BaseCallback {
         success?: (res?: any) => void;
         fail?: (res?: any) => void;
         complete?: (res?: any) => void;
     }
-    export interface LaunchOption {
-        scene: number; // 场景值
-        query: any; // 启动参数
-        shareTicket: string; // 票据
-        referrerInfo: { appId: string, extraData: any }; // 来源信息
+    // --画布
+    export class Canvas {
+        width: number;
+        height: number;
+        toTempFilePath(params: {
+            x?: number,
+            y?: number,
+            width?: number,
+            height?: number,
+            destWidth?: number,
+            destHeight?: number,
+            fileType: "jpg" | "png",
+            quality?: number,
+            success?: (res: { tempFilePath: string }) => void,
+            fail?: () => void,
+            complete?: () => void
+        }): void;
+        getContext(contextType: "2d" | "webgl", contextAttributes: { antialias?: boolean, preserveDrawingBuffer?: boolean, antialiasSamples?: number }): RenderingContext;
+        toDataURL(): string;
     }
 
     // --生命周期
+    interface LaunchOption {
+        scene: number;                                  // 场景值
+        query: any;                                     // 启动参数
+        shareTicket: string;                            // 票据
+        referrerInfo: { appId: string, extraData: any }; // 来源信息
+    }
     export function exitMiniProgram(cb?: BaseCallback): void;
     export function getLaunchOptionsSync(): LaunchOption;
     export function onHide(cb: () => void): void;
     export function offHide(cb: () => void): void;
     export function onShow(cb: (res: LaunchOption) => void): void;
     export function offShow(cb: () => void): void;
+
+    // --登录
+    export function login(params?: { timeout?: number, fail?: (res: any) => void, success?: (res: { code: string }) => void, complete?: () => void }): void;
 
     // --系统信息
     export interface SystemInfo {
@@ -58,7 +85,7 @@ declare namespace wx {
     }
     export function getSystemInfoSync(): SystemInfo;
 
-    //--音效相关
+    // --音效相关
     export class InnerAudioContext {
         src: string; // 音频资源的地址
         autoplay: boolean; // 是否自动播放
@@ -97,40 +124,13 @@ declare namespace wx {
     }
     export function createInnerAudioContext(): InnerAudioContext;
 
-    //--数据缓存
-    interface SetStorageParams extends BaseCallback {
-        key: string;
-        data: any;
-    }
-    interface GetStorageResult {
-        data: any
-    }
-    interface StorageParams extends BaseCallback {
-        key: string;
-    }
-    interface GetStorageInfoResult {
-        keys: [string];
-        currentSize: number;
-        limitSize: number;
-    }
-    export function setStorage(params: SetStorageParams): void; // 将数据存储在本地缓存中指定的key中 异步
-    export function setStorageSync(key: string, data: string): void; // 将数据存储在本地缓存中指定的key中 同步
-    export function removeStorage(params: StorageParams): void; // 从本地缓存中移除指定key 异步
-    export function removeStorageSync(key: string): void; // 从本地缓存中移除指定key 同步
-    export function getStorage(params: StorageParams): void; // 从本地缓存中异步获取指定key的内容 异步
-    export function getStorageSync(key: string): GetStorageResult; // 从本地缓存中异步获取指定key的内容 同步
-    export function getStorageInfo(params: BaseCallback): void; // 获取当前storage的相关信息 异步
-    export function getStorageInfoSync(): GetStorageInfoResult; // 获取当前storage的相关信息 同步
-    export function clearStorage(params: BaseCallback): void; // 清理本地数据缓存 异步
-    export function clearStorageSync(): void; // 清理本地数据缓存 同步
-
-    //--网络
-    interface RequestParams {
+    // --Http网络
+    interface HttpRequestParams {
         url: string;
         data?: string | { [key: string]: any };
         header?: { [name: string]: string };
         method?: "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "TRACE" | "CONNECT";
-        dataType?: string; // "json" | "arraybuffer"
+        dataType?: "json" | "arraybuffer";
         timeout?: number;
         responseType?: string;
         success?: (res: { data: any, statusCode: number, header?: { [key: string]: string } }) => void;
@@ -140,15 +140,19 @@ declare namespace wx {
     export class RequestTask {
         abort(): void;
     }
-    export function request(param: RequestParams): RequestTask;
+    export function request(param: HttpRequestParams): RequestTask;
 
-    interface LoginParams extends BaseCallback {
-        timeout?: number;
+    // --用户信息
+    export interface UserInfo {
+        nickName: string,
+        avatarUrl: string,
+        gender: 0 | 1 | 2,
+        country: string,
+        province: string,
+        city: string,
+        language: "en" | "zh_CN" | "zh_TW",
     }
-    export function login(params?: LoginParams): void;
-
-    //--用户信息
-    interface style {
+    interface Style {
         left: number,
         top: number,
         width: number,
@@ -161,19 +165,11 @@ declare namespace wx {
         fontSize: number,
         lineHeight: number
     }
-    interface CreateUserInfoButtonParams {
-        type: "text" | "image",             // 按钮的类型
-        text?: string,                      // type是text时有效
-        image?: string,                     // type是image时有效
-        style?: style,                      // 按钮的样式
-        withCredentials: boolean,           // 是否带上登录态信息
-        lang?: "en" | "zh_CN" | "zh_TW"     // 描述用户信息的语言 default en
-    }
     export class UserInfoButton {
         type: "text" | "image";
         text: string;
         image: string;
-        style: style;
+        style: Style;
         textAlign: "left" | "center" | "right";
         show(): void;
         hide(): void;
@@ -181,30 +177,47 @@ declare namespace wx {
         onTap(cb: (res?: any) => void): void;
         offTap(cb: (res?: any) => void): void;
     }
-    interface GetUserInfoParams extends BaseCallback {
-        withCredentials?: boolean,           // 是否带上登录态信息
-        lang?: "en" | "zh_CN" | "zh_TW"     // 描述用户信息的语言 default en
-    }
     export function getSetting(cb: BaseCallback): void; // 获取用户的当前设置
-    export function createUserInfoButton(params: CreateUserInfoButtonParams): UserInfoButton;
+    export function createUserInfoButton(params: {
+        type: "text" | "image",             // 按钮的类型
+        text?: string,                      // type是text时有效
+        image?: string,                     // type是image时有效
+        style?: Style,                      // 按钮的样式
+        withCredentials: boolean,           // 是否带上登录态信息
+        lang?: "en" | "zh_CN" | "zh_TW"     // 描述用户信息的语言 default en
+    }): UserInfoButton;
+    interface GetUserInfoParams {
+        withCredentials?: boolean,              // 是否带上登录态信息
+        lang?: "en" | "zh_CN" | "zh_TW",        // 描述用户信息的语言 default en
+        success?: (res: {
+            userInfo: UserInfo,
+            rawData: string,
+            signature: string,
+            encryptedData: string,
+            iv: string,
+            cloudID: string
+        }) => void,
+        fail?: (res: any) => void,
+        complete?: (res: any) => void
+    }
     export function getUserInfo(cb: GetUserInfoParams): void; //获取用户数据
 
-    //--转发
-    export interface ShowShareMenuParams extends BaseCallback {
-        withShareTicket?: boolean,
+    // --转发
+    interface ShowShareMenuParams extends BaseCallback {
+        withShareTicket?: boolean
     }
-    export interface UpdateShareMenuParams extends ShowShareMenuParams {
+    interface UpdateShareMenuParams extends ShowShareMenuParams {
         isUpdatableMessage?: boolean,
         activityId?: string,
         templateInfo?: { name: string, value: string }[]
     }
-    export interface ShareAppMessageParams {
+    interface ShareAppMessageParams {
         title?: string,
         imageUrl?: string,
         query?: string,
         imageUrlId?: string
     }
-    export interface GetShareInfoParams extends BaseCallback {
+    interface GetShareInfoParams extends BaseCallback {
         shareTicket: string,
         timeout?: number
     }
@@ -215,6 +228,44 @@ declare namespace wx {
     export function offShareAppMessage(cb: () => ShareAppMessageParams);
     export function hideShareMenu(params?: BaseCallback);
     export function getShareInfo(params: GetShareInfoParams);
+
+    // --开放数据
+    interface KVData {
+        key: string,
+        value: number | string | boolean
+    }
+    interface UserGameData {
+        avatarUrl: string,
+        nickname: string,
+        openid: string,
+        KVDataList: KVData[]
+    }
+    export function setUserCloudStorage(params: { KVDataList: KVData[], success?: (res: any) => void, fail?: (res: any) => void, complete?: (res: any) => void });
+    export function getUserCloudStorage(params: { keyList: string[], success?: (res: any) => void, fail?: (res: any) => void, complete?: (res: any) => void });
+    export function getSharedCanvas(): Canvas;
+    export function getGroupCloudStorage(params: { 
+        shareTicket: string, 
+        keyList: string[], 
+        success?: (res: UserGameData[]) => void,
+        fail?: (res: any) => void,
+        complete?: (res: any) => void
+    });
+    export function getFriendCloudStorage(params: {
+        keyList: string[],
+        success?: (res: UserGameData[]) => void,
+        fail?: (res: any) => void,
+        complete?: (res: any) => void
+    });
+    
+    export class OpenDataContext {
+        canvas: Canvas;
+        postMessage(data: {
+            key: string,
+            value: number | string | boolean
+        }): void;
+    }
+    export function getOpenDataContext(): OpenDataContext;
+    export function onMessage(cb: (res: { key: string, value: number | string | boolean }) => void);
 
 }
 
