@@ -53,17 +53,9 @@ export class Utils extends cc.Object {
 
     public static getStorageSync(key: string, defaultValue: string): string {
         try {
-            if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-                let storage = wx.getStorageSync(key);
-                if (storage && storage.data) {
-                    return storage.data;
-                }
-                return defaultValue;
-            } else {
-                let tmp = cc.sys.localStorage.getItem(key);
-                if (tmp) {
-                    return tmp;
-                }
+            let tmp = cc.sys.localStorage.getItem(key);
+            if (tmp) {
+                return tmp;
             }
             return defaultValue;
         } catch (e) {
@@ -72,7 +64,7 @@ export class Utils extends cc.Object {
         }
     }
 
-    public static setStorage(key: string, value: any, isSync?: boolean, cb?: { success?: () => void, fail?: () => void, complete?: () => void }): void {
+    public static setStorage(key: string, value: any): void {
         try {
             if (typeof value == "number" || typeof value == "string" || typeof value == "boolean") {
                 value = value;
@@ -81,27 +73,7 @@ export class Utils extends cc.Object {
             } else {
                 Utils.LOGE(this.TAG, "set storage error key is " + key);
             }
-            if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-                if (isSync) {
-                    wx.setStorage({
-                        key: key,
-                        data: value,
-                        success: () => {
-                            if (cb && cb.success) { cb.success(); }
-                        },
-                        fail: () => {
-                            if (cb && cb.fail) { cb.fail(); }
-                        },
-                        complete: () => {
-                            if (cb && cb.complete) { cb.complete(); }
-                        }
-                    });
-                } else {
-                    wx.setStorageSync(key, value);
-                }
-            } else {
-                cc.sys.localStorage.setItem(key, value);
-            }
+            cc.sys.localStorage.setItem(key, value);
         } catch (e) {
             Utils.LOGE(this.TAG, "setLocalStorage error = " + e);
         }

@@ -189,7 +189,7 @@ export class SoundManager extends cc.Object {
      */
     public closeMusic() {
         this._isStopMusic = true;
-        Utils.setStorage(KEY_STORAGE_MUSIC_STATUS, "1", true);
+        Utils.setStorage(KEY_STORAGE_MUSIC_STATUS, "1");
         this.pauseMusic();
     }
 
@@ -198,7 +198,7 @@ export class SoundManager extends cc.Object {
      */
     public openMusic() {
         this._isStopMusic = false;
-        Utils.setStorage(KEY_STORAGE_MUSIC_STATUS, "0", true);
+        Utils.setStorage(KEY_STORAGE_MUSIC_STATUS, "0");
         this.resumeMusic();
     }
 
@@ -207,7 +207,7 @@ export class SoundManager extends cc.Object {
      */
     public closeEffect() {
         this._isStopEffect = true;
-        Utils.setStorage(KEY_STORAGE_EFFECT_STATUS, "1", true);
+        Utils.setStorage(KEY_STORAGE_EFFECT_STATUS, "1");
         cc.audioEngine.stopAllEffects();
     }
 
@@ -216,7 +216,7 @@ export class SoundManager extends cc.Object {
      */
     public openEffect() {
         this._isStopEffect = false;
-        Utils.setStorage(KEY_STORAGE_EFFECT_STATUS, "0", true);
+        Utils.setStorage(KEY_STORAGE_EFFECT_STATUS, "0");
     }
 
     /**
