@@ -31,10 +31,10 @@ if (cc.sys.platform == cc.sys.WECHAT_GAME) {
     }
 } else {
     cc.game.on(cc.game.EVENT_SHOW, ()=>{
-        NotificationCenter.trigger(CommonEvent.COMMON_EVENT_GAME_ON_HIDE);
+        NotificationCenter.trigger(CommonEvent.COMMON_EVENT_GAME_ON_SHOW);
     });
     cc.game.on(cc.game.EVENT_HIDE, ()=>{
-        NotificationCenter.trigger(CommonEvent.COMMON_EVENT_GAME_ON_SHOW);
+        NotificationCenter.trigger(CommonEvent.COMMON_EVENT_GAME_ON_HIDE);
     });
 }
 

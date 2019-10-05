@@ -6,6 +6,8 @@
 ================================================================*/
 
 import { Utils } from "./Utils";
+import { NotificationCenter } from "./NotificationCenter";
+import { CommonEvent } from "./CommonEvent";
 
 const KEY_STORAGE_MUSIC_STATUS: string = "KEY_STORAGE_MUSIC_STATUS";
 const KEY_STORAGE_EFFECT_STATUS: string = "KEY_STORAGE_EFFECT_STATUS";
@@ -28,8 +30,25 @@ export class SoundManager extends cc.Object {
         if (this._instance == null) {
             this._instance = new SoundManager();
             this._instance.initStatus();
+            this._instance.registerEvents();
         }
         return this._instance;
+    }
+
+    protected registerEvents() {
+        NotificationCenter.getInstance().listen(CommonEvent.COMMON_EVENT_GAME_ON_SHOW, this.onCommonEventGameOnShow, this);
+        NotificationCenter.getInstance().listen(CommonEvent.COMMON_EVENT_GAME_ON_HIDE, this.onCommonEventGameOnHide, this);
+    }
+
+    protected onCommonEventGameOnShow() {
+        if (this._isStopMusic || this._mute) {
+            return;
+        }
+        this.resumeMusic();
+    }
+
+    protected onCommonEventGameOnHide() {
+        this.pauseMusic();
     }
 
     /**
@@ -102,7 +121,7 @@ export class SoundManager extends cc.Object {
                         this.pauseMusic();
                     }
                 }
-            })
+            });
         }
     }
 
