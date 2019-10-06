@@ -232,7 +232,7 @@ declare namespace wx {
     // --开放数据
     interface KVData {
         key: string,
-        value: number | string | boolean
+        value: string
     }
     interface UserGameData {
         avatarUrl: string,
@@ -243,9 +243,9 @@ declare namespace wx {
     export function setUserCloudStorage(params: { KVDataList: KVData[], success?: (res: any) => void, fail?: (res: any) => void, complete?: (res: any) => void });
     export function getUserCloudStorage(params: { keyList: string[], success?: (res: any) => void, fail?: (res: any) => void, complete?: (res: any) => void });
     export function getSharedCanvas(): Canvas;
-    export function getGroupCloudStorage(params: { 
-        shareTicket: string, 
-        keyList: string[], 
+    export function getGroupCloudStorage(params: {
+        shareTicket: string,
+        keyList: string[],
         success?: (res: UserGameData[]) => void,
         fail?: (res: any) => void,
         complete?: (res: any) => void
@@ -256,13 +256,10 @@ declare namespace wx {
         fail?: (res: any) => void,
         complete?: (res: any) => void
     });
-    
+
     export class OpenDataContext {
         canvas: Canvas;
-        postMessage(data: {
-            key: string,
-            value: number | string | boolean
-        }): void;
+        postMessage(data: { [propName: string]: number | string | boolean }): void;
     }
     export function getOpenDataContext(): OpenDataContext;
     export function onMessage(cb: (res: { key: string, value: number | string | boolean }) => void);
