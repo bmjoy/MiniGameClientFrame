@@ -8,15 +8,37 @@
 declare namespace wx {
 
     // --基本数据结构
-    interface RenderingContext {
-
-    }
     interface BaseCallback {
         success?: (res?: any) => void;
         fail?: (res?: any) => void;
         complete?: (res?: any) => void;
     }
-    // --画布
+
+    // --渲染
+    interface CanvasPattern {
+
+    }
+    interface Image {
+        src: string;
+        width: number;
+        height: number;
+        onload: (res: any) => void;
+        onerror: (res: any) => void
+    }
+    interface RenderingContext {
+        fillStyle: string | CanvasPattern;
+        textAlign: string,
+        baseLine: string,
+        font: string;
+        fill();
+        fillRect(x: number, y: number, width: number, height: number);
+        fillText(content: string, offsetX: number, offsetY: number);
+        drawImage(image: Image | Canvas, dx: number, dy: number, dWidth: number, dHeight: number);
+        drawImage(image: Image | Canvas, sx: number, sy: number, sWidth: number, sHeight: number, dx: number, dy: number, dWidth: number, dHeight: number);
+        clearRect(x: number, y: number, width: number, height: number);
+        createPattern(image: Image | Canvas, repetition: "repeat" | "repeat-x" | "repeat-y" | "no-repeat"): CanvasPattern;
+        arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise: boolean);
+    }
     export class Canvas {
         width: number;
         height: number;
@@ -33,9 +55,12 @@ declare namespace wx {
             fail?: () => void,
             complete?: () => void
         }): void;
-        getContext(contextType: "2d" | "webgl", contextAttributes: { antialias?: boolean, preserveDrawingBuffer?: boolean, antialiasSamples?: number }): RenderingContext;
+        getContext(contextType: "2d" | "webgl", contextAttributes?: { antialias?: boolean, preserveDrawingBuffer?: boolean, antialiasSamples?: number }): RenderingContext;
         toDataURL(): string;
     }
+    export function createCanvas(): Canvas;
+    export function createImage(): Image;
+
 
     // --生命周期
     interface LaunchOption {
@@ -246,19 +271,19 @@ declare namespace wx {
     export function getGroupCloudStorage(params: {
         shareTicket: string,
         keyList: string[],
-        success?: (res: UserGameData[]) => void,
+        success?: (res: { errMsg: string, data: UserGameData[] }) => void,
         fail?: (res: any) => void,
         complete?: (res: any) => void
     });
     export function getFriendCloudStorage(params: {
         keyList: string[],
-        success?: (res: UserGameData[]) => void,
+        success?: (res: { errMsg: string, data: UserGameData[] }) => void,
         fail?: (res: any) => void,
         complete?: (res: any) => void
     });
 
     export class OpenDataContext {
-        canvas: Canvas;
+        canvas: Canvas | HTMLImageElement;
         postMessage(data: { [propName: string]: number | string | boolean }): void;
     }
     export function getOpenDataContext(): OpenDataContext;
