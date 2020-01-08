@@ -15,7 +15,10 @@ export class FrameworkBehavior extends FrameworkObject {
 
     /**
      * 自动绑定
-     * @param object 需要绑定的对象
+     *
+     * @param {cc.Object} object
+     * @returns
+     * @memberof FrameworkBehavior
      */
     public autoBindFunction(object: cc.Object) {
         if (!cc.isValid(object)) {
@@ -29,19 +32,20 @@ export class FrameworkBehavior extends FrameworkObject {
         this.manualBindFunction();
     }
 
-    /*
-    * 扩展函数
-    *   1. 默认情况下先执行 oldFunctionName 后执行 newFunctionName
-    *   2. oldFunctionName 函数的所有参数都会当参数传递给 newFunctionName
-    *   3. 如果 oldFunctionName 有返回值 返回值将作为 newFunctionName 最后一个参数传入
-    * @params
-    * object class 被扩展对象
-    * oldFunctionName string 被扩展对象中的函数名称
-    * newFunctionName string 扩展的函数名称
-    * deprecated bool 废弃被扩展对象中的函数 只执行 newFunctionName
-    * endCallBack bool 后调用 oldFunctionName
-    * */
-    protected bindFunction(oldFunctionName, newFunctionName, deprecated, endCallBack) {
+    /**
+     * 扩展函数
+     *   1. 默认情况下先执行 oldFunctionName 后执行 newFunctionName
+     *   2. oldFunctionName 函数的所有参数都会当参数传递给 newFunctionName
+     *   3. 如果 oldFunctionName 有返回值 返回值将作为 newFunctionName 最后一个参数传入
+     * @protected
+     * @param {string} oldFunctionName 
+     * @param {string} newFunctionName
+     * @param {boolean} deprecated
+     * @param {boolean} endCallBack
+     * @returns
+     * @memberof FrameworkBehavior
+     */
+    protected bindFunction(oldFunctionName: string, newFunctionName: string, deprecated: boolean, endCallBack: boolean) {
         if (!this[newFunctionName]) {
             this.LOGE(this.TAG, "不存在函数:" + newFunctionName);
             return;
@@ -73,9 +77,12 @@ export class FrameworkBehavior extends FrameworkObject {
         }
     }
 
-    /*
-    * 手动绑定函数 主要给子类重载
-    * */
+    /**
+     * 手动绑定函数 主要给子类重载
+     *
+     * @protected
+     * @memberof FrameworkBehavior
+     */
     protected manualBindFunction() {
 
     }

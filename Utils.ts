@@ -13,6 +13,15 @@ export class Utils extends cc.Object {
         Utils.LOGE(Utils.TAG, "不需要初始化");
     }
 
+    /**
+     * 版本号转数字
+     *
+     * @protected
+     * @static
+     * @param {string} version 3位版本号
+     * @returns {number}
+     * @memberof Utils
+     */
     protected static versionToNumber(version: string): number {
         try {
             var tmpArr: string[] = version.split(".");
@@ -28,6 +37,15 @@ export class Utils extends cc.Object {
         }
     }
 
+    /**
+     * 版本号比较
+     *
+     * @static
+     * @param {string} version 3位版本号 
+     * @param {string} baseVersion 3位版本号
+     * @returns {number}
+     * @memberof Utils
+     */
     public static compareVersion(version: string, baseVersion: string): number {
         let versionNumber = this.versionToNumber(version);
         let baseVersionNumber = this.versionToNumber(baseVersion);
@@ -39,18 +57,51 @@ export class Utils extends cc.Object {
         return -1;
     }
 
+    /**
+     * 调试日志
+     *
+     * @static
+     * @param {string} tag
+     * @param {*} [msg]
+     * @memberof Utils
+     */
     public static LOGD(tag: string, msg?: any): void {
         console.log(tag, msg);
     }
 
+    /**
+     * 错误日志
+     *
+     * @static
+     * @param {string} tag
+     * @param {*} [msg]
+     * @memberof Utils
+     */
     public static LOGE(tag: string, msg?: any): void {
         console.error(tag, msg);
     }
 
+    /**
+     * 警告日志
+     *
+     * @static
+     * @param {string} tag
+     * @param {*} [msg]
+     * @memberof Utils
+     */
     public static LOGW(tag: string, msg?: any): void {
         console.warn(tag, msg);
     }
 
+    /**
+     * 获取本地指定key缓存
+     *
+     * @static
+     * @param {string} key
+     * @param {string} defaultValue
+     * @returns {string}
+     * @memberof Utils
+     */
     public static getStorageSync(key: string, defaultValue: string): string {
         try {
             let tmp = cc.sys.localStorage.getItem(key);
@@ -64,6 +115,14 @@ export class Utils extends cc.Object {
         }
     }
 
+    /**
+     * 设置本地缓存
+     *
+     * @static
+     * @param {string} key
+     * @param {*} value
+     * @memberof Utils
+     */
     public static setStorage(key: string, value: any): void {
         try {
             if (typeof value == "number" || typeof value == "string" || typeof value == "boolean") {
@@ -79,6 +138,16 @@ export class Utils extends cc.Object {
         }
     }
 
+    /**
+     * 为精灵设置纹理
+     *
+     * @static
+     * @param {string} url
+     * @param {cc.Sprite} sprite
+     * @param {(tex: cc.Texture2D) => void} [success]
+     * @param {(err: Error) => void} [fail]
+     * @memberof Utils
+     */
     public static setImageToSpriteByUrl(url: string, sprite: cc.Sprite, success?: (tex: cc.Texture2D) => void, fail?: (err: Error) => void): void {
         if (!url || url.length == 0) {
             fail && fail(Error("url is error"));
@@ -97,6 +166,14 @@ export class Utils extends cc.Object {
         });
     }
 
+    /**
+     * 权限检测(微信)
+     *
+     * @static
+     * @param {("userInfo" | "userLocation" | "werun" | "writePhotosAlbum")} type
+     * @param {(authorize: boolean)=>void} [cb]
+     * @memberof Utils
+     */
     public static isAuthorWechat(type: "userInfo" | "userLocation" | "werun" | "writePhotosAlbum", cb?: (authorize: boolean)=>void) {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
             wx.getSetting({
@@ -115,12 +192,28 @@ export class Utils extends cc.Object {
         }
     }
 
+    /**
+     * 获取用户信息(微信)
+     *
+     * @static
+     * @param {wx.GetUserInfoParams} cb
+     * @memberof Utils
+     */
     public static getUserInfoWechat(cb: wx.GetUserInfoParams) {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
             wx.getUserInfo(cb);
         }
     }
 
+    /**
+     * 格式化字符串
+     *
+     * @static
+     * @param {string} str
+     * @param {number} maxLength
+     * @returns {string}
+     * @memberof Utils
+     */
     public static formateStr(str: string, maxLength: number): string {
         if (str.length <= maxLength) {
             return str;
@@ -128,6 +221,15 @@ export class Utils extends cc.Object {
         return str.substr(0, maxLength);
     }
 
+    /**
+     * 查找节点
+     *
+     * @static
+     * @param {cc.Node} parent
+     * @param {string} childName
+     * @returns {(cc.Node | null)}
+     * @memberof Utils
+     */
     public static searchNode(parent: cc.Node, childName: string): cc.Node | null {
         for (let i = 0; i < parent.childrenCount; i++) {
             let childNode = parent.children[i];
@@ -144,6 +246,14 @@ export class Utils extends cc.Object {
         return null;
     }
 
+    /**
+     * 深度拷贝
+     *
+     * @static
+     * @param {*} obj
+     * @returns {*}
+     * @memberof Utils
+     */
     public static deepCopy(obj: any): any {
         if (obj == undefined || obj == null) {
             return obj;

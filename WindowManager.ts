@@ -29,50 +29,61 @@ interface OpenWindowParams {
 export class WindowManager extends FrameworkObject {
 
     protected readonly TAG: string = "WindowManager";
-    protected static _instance: WindowManager = null;
-    protected _windowList: WindowInfo[] = [];
-    protected _maskNode: cc.Node = null;
-    protected _maskBgPath: string = "Common/common_mask_1";
-    protected _windowMaxIndex: number = 100;
+    protected static instance: WindowManager = null;
+    protected windowList: WindowInfo[] = [];
+    protected maskNode: cc.Node = null;
+    protected maskBgPath: string = "Common/common_mask_1";
+    protected windowMaxIndex: number = 100;
 
     protected constructor() {
         super();
     }
 
+    /**
+     * 获取实例
+     *
+     * @static
+     * @returns {WindowManager}
+     * @memberof WindowManager
+     */
     public static getInstance(): WindowManager {
-        if (this._instance == null) {
-            this._instance = new WindowManager();
+        if (this.instance == null) {
+            this.instance = new WindowManager();
         }
-        return this._instance;
+        return this.instance;
     }
 
     /**
      * 打开窗口
-     * @param prefabPath 
-     * @param component 
-     * @param params 
+     *
+     * @template T
+     * @param {string} prefabPath
+     * @param {new () => T} component
+     * @param {OpenWindowParams} [params]
+     * @returns
+     * @memberof WindowManager
      */
     public openWindow<T extends cc.Component>(prefabPath: string, component: new () => T, params?: OpenWindowParams) {
-        if (!cc.isValid(this._maskNode)) {
+        if (!cc.isValid(this.maskNode)) {
             this.createMaskNode();
         }
         if (params && params.repeat === false) {
-            for (let index = 0, length = this._windowList.length; index < length; index++) {
-                if (prefabPath === this._windowList[index].prefabPath) {
+            for (let index = 0, length = this.windowList.length; index < length; index++) {
+                if (prefabPath === this.windowList[index].prefabPath) {
                     this.LOGW(this.TAG, prefabPath + " can not repeat");
                     return;
                 }
             }
         }
         if (params && params.isSequence === false) {
-            this._windowList.unshift({
+            this.windowList.unshift({
                 prefabPath: prefabPath,
                 component: component,
                 params: params,
                 hasShow: false
             });
         } else {
-            this._windowList.push({
+            this.windowList.push({
                 prefabPath: prefabPath,
                 component: component,
                 params: params,
@@ -84,15 +95,19 @@ export class WindowManager extends FrameworkObject {
 
     /**
      * 关闭窗口
-     * @param component 
+     *
+     * @template T
+     * @param {new () => T} component
+     * @returns
+     * @memberof WindowManager
      */
     public closeWindow<T extends cc.Component>(component: new () => T) {
-        for (let index = 0, length = this._windowList.length; index < length; index++) {
-            let windowInfo = this._windowList[index];
+        for (let index = 0, length = this.windowList.length; index < length; index++) {
+            let windowInfo = this.windowList[index];
             if (windowInfo.component === component && windowInfo.hasShow) {
                 let script = windowInfo.node.getComponent(component);
                 script && typeof script["willDestroy"] === "function" && script["willDestroy"]();
-                this._windowList.splice(index, 1);
+                this.windowList.splice(index, 1);
                 windowInfo.node.destroy();
                 this.checkShowWindow();
                 return;
@@ -103,18 +118,22 @@ export class WindowManager extends FrameworkObject {
 
     /**
      * 检测需要弹出的弹窗
+     *
+     * @protected
+     * @returns
+     * @memberof WindowManager
      */
     protected checkShowWindow() {
-        if (this._windowList.length <= 0) {
+        if (this.windowList.length <= 0) {
             this.hideMaskNode();
             return;
         }
-        let topWindowInfo = this._windowList[0];
+        let topWindowInfo = this.windowList[0];
         // 是否隐藏其它弹窗
         if (topWindowInfo.params && topWindowInfo.params.hideOther === true) {
-            for (let index = 0, length = this._windowList.length; index < length; index++) {
-                if (this._windowList[index].hasShow && cc.isValid(this._windowList[index].node)) {
-                    this._windowList[index].node.active = false;
+            for (let index = 0, length = this.windowList.length; index < length; index++) {
+                if (this.windowList[index].hasShow && cc.isValid(this.windowList[index].node)) {
+                    this.windowList[index].node.active = false;
                 }
             }
         }
@@ -123,7 +142,10 @@ export class WindowManager extends FrameworkObject {
 
     /**
      * 展示指定弹窗
-     * @param windowInfo 
+     *
+     * @protected
+     * @param {WindowInfo} windowInfo
+     * @memberof WindowManager
      */
     protected showWindow(windowInfo: WindowInfo) {
         if (windowInfo.hasShow) { // 已经弹出过
@@ -144,7 +166,7 @@ export class WindowManager extends FrameworkObject {
 
                 }, (err, prefab) => {
                     if (!err) {
-                        if (windowInfo === this._windowList[0]) { // 依然队列的头部
+                        if (windowInfo === this.windowList[0]) { // 依然队列的头部
                             windowInfo.node = cc.instantiate(prefab);
                             this.adjustIndex();
                             let script = windowInfo.node.getComponent(windowInfo.component);
@@ -157,8 +179,8 @@ export class WindowManager extends FrameworkObject {
                     } else {
                         this.LOGE(this.TAG, windowInfo.prefabPath + " error: " + JSON.stringify(err));
                         windowInfo.params && windowInfo.params.errorCallback && windowInfo.params.errorCallback(err);
-                        if (this._windowList.indexOf(windowInfo) >= 0) {
-                            this._windowList.splice(this._windowList.indexOf(windowInfo), 1);
+                        if (this.windowList.indexOf(windowInfo) >= 0) {
+                            this.windowList.splice(this.windowList.indexOf(windowInfo), 1);
                         }
                         this.checkShowWindow();
 
@@ -170,63 +192,76 @@ export class WindowManager extends FrameworkObject {
 
     /**
      * 调整弹窗的蒙版的层级
+     *
+     * @protected
+     * @memberof WindowManager
      */
     protected adjustIndex() {
-        let length = this._windowList.length;
+        let length = this.windowList.length;
         for (let index = 0; index < length; index++) {
-            let windowInfo = this._windowList[index];
+            let windowInfo = this.windowList[index];
             if (cc.isValid(windowInfo.node)) {
-                windowInfo.node.zIndex = this._windowMaxIndex - index * 2;
+                windowInfo.node.zIndex = this.windowMaxIndex - index * 2;
             }
-            if (index == 0 && cc.isValid(this._maskNode)) {
-                this._maskNode.zIndex = this._windowMaxIndex - 1;
+            if (index == 0 && cc.isValid(this.maskNode)) {
+                this.maskNode.zIndex = this.windowMaxIndex - 1;
                 if (windowInfo.params && windowInfo.params.needMask === false) {
-                    this._maskNode.active = false;
+                    this.maskNode.active = false;
                 } else {
-                    this._maskNode.active = true;
+                    this.maskNode.active = true;
                 }
             }
         }
     }
+    
     /**
      * 创建蒙版
+     *
+     * @protected
+     * @memberof WindowManager
      */
     protected createMaskNode() {
-        this._maskNode = new cc.Node();
-        this._maskNode.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
-        this._maskNode.width = cc.winSize.width;
-        this._maskNode.height = cc.winSize.height;
-        let sp = this._maskNode.addComponent(cc.Sprite);
+        this.maskNode = new cc.Node();
+        this.maskNode.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
+        this.maskNode.width = cc.winSize.width;
+        this.maskNode.height = cc.winSize.height;
+        let sp = this.maskNode.addComponent(cc.Sprite);
         sp.sizeMode = cc.Sprite.SizeMode.CUSTOM;
-        this.setSpriteFrameForSprite(sp, this._maskBgPath);
-        this._maskNode.on(cc.Node.EventType.TOUCH_END, () => {
-            for (let index = this._windowList.length - 1; index >= 0; index--) {
-                let panel = this._windowList[index];
+        this.setSpriteFrameForSprite(sp, this.maskBgPath);
+        this.maskNode.on(cc.Node.EventType.TOUCH_END, () => {
+            for (let index = this.windowList.length - 1; index >= 0; index--) {
+                let panel = this.windowList[index];
                 if (panel.node && panel.node.active && panel.params && panel.params.touchMaskClose) {
                     this.closeWindow(panel.component);
                     break;
                 }
             }
         });
-        this._maskNode.active = false;
-        cc.director.getScene().addChild(this._maskNode);
+        this.maskNode.active = false;
+        cc.director.getScene().addChild(this.maskNode);
     }
 
     /**
      * 展示蒙版
+     *
+     * @protected
+     * @memberof WindowManager
      */
     protected showMaskNode() {
-        if (cc.isValid(this._maskNode)) {
-            this._maskNode.active = true;
+        if (cc.isValid(this.maskNode)) {
+            this.maskNode.active = true;
         }
     }
 
     /**
      * 隐藏蒙版
+     *
+     * @protected
+     * @memberof WindowManager
      */
     protected hideMaskNode() {
-        if (this._maskNode) {
-            this._maskNode.active = false;
+        if (this.maskNode) {
+            this.maskNode.active = false;
         }
     }
 }

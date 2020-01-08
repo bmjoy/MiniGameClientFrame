@@ -24,14 +24,38 @@ export class NotificationCenter extends cc.Object {
         }
     }
 
+    /**
+     * 实例
+     *
+     * @static
+     * @returns {NotificationCenter}
+     * @memberof NotificationCenter
+     */
     public static getInstance(): NotificationCenter {
         return this.instance;
     }
 
+    /**
+     * 监听指定消息
+     *
+     * @static
+     * @param {string} event
+     * @param {(params?: any) => void} callback
+     * @param {*} [target]
+     * @memberof NotificationCenter
+     */
     public static listen(event: string, callback: (params?: any) => void, target?: any) {
         this.instance.listen(event, callback, target);
     }
 
+    /**
+     * 监听指定消息
+     *
+     * @param {string} event
+     * @param {(params?: any) => void} callback
+     * @param {*} [target]
+     * @memberof NotificationCenter
+     */
     public listen(event: string, callback: (params?: any) => void, target?: any) {
         this._events[event] = this._events[event] || [];
         let notificationHandler: NotificationHandler = {
@@ -41,10 +65,28 @@ export class NotificationCenter extends cc.Object {
         this._events[event].push(notificationHandler)
     }
 
+    /**
+     * 移除指定消息的监听
+     *
+     * @static
+     * @param {string} event
+     * @param {(params?: any) => void} callback
+     * @param {*} [target]
+     * @memberof NotificationCenter
+     */
     public static ignore(event: string, callback: (params?: any) => void, target?: any): void {
         this.instance.ignore(event, callback, target);
     }
 
+    /**
+     * 移除指定消息的监听
+     *
+     * @param {string} event
+     * @param {(params?: any) => void} callback
+     * @param {*} [target]
+     * @returns {void}
+     * @memberof NotificationCenter
+     */
     public ignore(event: string, callback: (params?: any) => void, target?: any): void {
         target = target || this;
         var callbacks = this._events[event];
@@ -56,10 +98,23 @@ export class NotificationCenter extends cc.Object {
         })
     }
 
+    /**
+     * 移除目标所有监听的消息
+     *
+     * @static
+     * @param {*} target
+     * @memberof NotificationCenter
+     */
     public static ignoreAllTarget(target: any): void {
         this.instance.ignoreAllTarget(target);
     }
 
+    /**
+     * 移除目标所有监听的消息
+     *
+     * @param {*} target
+     * @memberof NotificationCenter
+     */
     public ignoreAllTarget(target: any): void {
         for (const event in this._events) {
             var notificationHandlers = this._events[event];
@@ -75,10 +130,25 @@ export class NotificationCenter extends cc.Object {
         }
     }
 
+    /**
+     * 触发指定消息
+     *
+     * @static
+     * @param {string} event
+     * @param {*} [params]
+     * @memberof NotificationCenter
+     */
     public static trigger(event: string, params?: any): void {
         this.instance.trigger(event, params);
     }
 
+    /**
+     * 触发指定消息
+     *
+     * @param {string} event
+     * @param {*} [params]
+     * @memberof NotificationCenter
+     */
     public trigger(event: string, params?: any) {
         var notificationHandlers = this._events[event];
         if (notificationHandlers) {

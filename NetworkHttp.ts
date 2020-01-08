@@ -29,6 +29,13 @@ export class NetworkHttp extends FrameworkObject {
         Utils.LOGE(NetworkHttp.TAG, "不需要初始化");
     }
 
+    /**
+     * http请求
+     *
+     * @static
+     * @param {HttpBaseParams} params
+     * @memberof NetworkHttp
+     */
     public static httpRequest(params: HttpBaseParams) {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
             wx.request({

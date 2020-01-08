@@ -19,7 +19,10 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 绑定函数
-     * @param Behavior
+     *
+     * @template A
+     * @param {new () => A} Behavior
+     * @memberof FrameworkObject
      */
     public bindBehavior<A extends FrameworkBehavior>(Behavior: new () => A) {
         let behavior: FrameworkBehavior = new Behavior();
@@ -28,9 +31,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 监听指定事件
-     * @param event 
-     * @param cb 
-     * @param target 
+     *
+     * @protected
+     * @param {string} event
+     * @param {(res?: any) => void} cb
+     * @param {*} [target]
+     * @memberof FrameworkObject
      */
     protected listen(event: string, cb: (res?: any) => void, target?: any): void {
         NotificationCenter.listen(event, cb, target);
@@ -38,9 +44,13 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 监听指定事件
-     * @param event 
-     * @param cb 
-     * @param target 
+     *
+     * @protected
+     * @static
+     * @param {string} event
+     * @param {(res?: any) => void} cb
+     * @param {*} [target]
+     * @memberof FrameworkObject
      */
     protected static listen(event: string, cb: (res?: any) => void, target?: any): void {
         NotificationCenter.listen(event, cb, target);
@@ -48,8 +58,11 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 派发指定事件
-     * @param event 
-     * @param params 
+     *
+     * @protected
+     * @param {string} event
+     * @param {*} [params]
+     * @memberof FrameworkObject
      */
     protected trigger(event: string, params?: any): void {
         NotificationCenter.getInstance().trigger(event, params);
@@ -57,8 +70,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 派发指定事件
-     * @param event 
-     * @param params 
+     *
+     * @protected
+     * @static
+     * @param {string} event
+     * @param {*} [params]
+     * @memberof FrameworkObject
      */
     protected static trigger(event: string, params?: any): void {
         NotificationCenter.getInstance().trigger(event, params);
@@ -66,9 +83,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 取消指定事件的监听
-     * @param event 
-     * @param cb 
-     * @param target 
+     *
+     * @protected
+     * @param {string} event
+     * @param {(res?: any) => void} cb
+     * @param {*} [target]
+     * @memberof FrameworkObject
      */
     protected ignore(event: string, cb: (res?: any) => void, target?: any): void {
         NotificationCenter.ignore(event, cb, target);
@@ -76,9 +96,13 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 取消指定事件的监听
-     * @param event 
-     * @param cb 
-     * @param target 
+     *
+     * @protected
+     * @static
+     * @param {string} event
+     * @param {(res?: any) => void} cb
+     * @param {*} [target]
+     * @memberof FrameworkObject
      */
     protected static ignore(event: string, cb: (res?: any) => void, target?: any): void {
         NotificationCenter.ignore(event, cb, target);
@@ -86,7 +110,10 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 取消指定对象的所有监听事件
-     * @param target 
+     *
+     * @protected
+     * @param {*} target
+     * @memberof FrameworkObject
      */
     protected ignoreAllTarget(target: any): void {
         NotificationCenter.ignoreAllTarget(target);
@@ -94,8 +121,11 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 为指定node节点上的cc.Sprites组建设置图片
-     * @param node 
-     * @param url 
+     *
+     * @protected
+     * @param {cc.Node} node
+     * @param {string} url
+     * @memberof FrameworkObject
      */
     protected setSpriteFrameForNode(node: cc.Node, url: string): void {
         SpriteManager.getInstance().setSpriteFrameForNode(node, url);
@@ -103,8 +133,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 为指定node节点上的cc.Sprites组建设置图片
-     * @param node 
-     * @param url 
+     *
+     * @protected
+     * @static
+     * @param {cc.Node} node
+     * @param {string} url
+     * @memberof FrameworkObject
      */
     protected static setSpriteFrameForNode(node: cc.Node, url: string): void {
         SpriteManager.getInstance().setSpriteFrameForNode(node, url);
@@ -112,8 +146,11 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 为cc.Sprite设置图片
-     * @param sprite 
-     * @param url 
+     *
+     * @protected
+     * @param {cc.Sprite} sprite
+     * @param {string} url
+     * @memberof FrameworkObject
      */
     protected setSpriteFrameForSprite(sprite: cc.Sprite, url: string): void {
         SpriteManager.getInstance().setSpriteFrameForSprite(sprite, url);
@@ -121,8 +158,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 为cc.Sprite设置图片
-     * @param sprite 
-     * @param url 
+     *
+     * @protected
+     * @static
+     * @param {cc.Sprite} sprite
+     * @param {string} url
+     * @memberof FrameworkObject
      */
     protected static setSpriteFrameForSprite(sprite: cc.Sprite, url: string): void {
         SpriteManager.getInstance().setSpriteFrameForSprite(sprite, url);
@@ -130,12 +171,15 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 切换场景
-     * @param from 
-     * @param to 
-     * @param onBeforeLoadScene 
-     * @param onLaunched 
-     * @param fail 
-     * @param progress 
+     *
+     * @protected
+     * @param {string} from
+     * @param {string} to
+     * @param {() => void} [onBeforeLoadScene]
+     * @param {() => void} [onLaunched]
+     * @param {(res: ChangeSceneResult) => void} [fail]
+     * @param {(completed: number, total: number, item: any) => void} [progress]
+     * @memberof FrameworkObject
      */
     protected changeScene(from: string, to: string, onBeforeLoadScene?: () => void, onLaunched?: () => void, fail?: (res: ChangeSceneResult) => void, progress?: (completed: number, total: number, item: any) => void) {
         SceneManager.getInstance().changeScene(from, to, onBeforeLoadScene, onLaunched, fail, progress);
@@ -143,12 +187,16 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 切换场景
-     * @param from 
-     * @param to 
-     * @param onBeforeLoadScene 
-     * @param onLaunched 
-     * @param fail 
-     * @param progress 
+     *
+     * @protected
+     * @static
+     * @param {string} from
+     * @param {string} to
+     * @param {() => void} [onBeforeLoadScene]
+     * @param {() => void} [onLaunched]
+     * @param {(res: ChangeSceneResult) => void} [fail]
+     * @param {(completed: number, total: number, item: any) => void} [progress]
+     * @memberof FrameworkObject
      */
     protected static changeScene(from: string, to: string, onBeforeLoadScene?: () => void, onLaunched?: () => void, fail?: (res: ChangeSceneResult) => void, progress?: (completed: number, total: number, item: any) => void) {
         SceneManager.getInstance().changeScene(from, to, onBeforeLoadScene, onLaunched, fail, progress);
@@ -156,7 +204,11 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 深度拷贝一个对象
-     * @param obj 
+     *
+     * @protected
+     * @param {*} obj
+     * @returns {*}
+     * @memberof FrameworkObject
      */
     protected deepCopy(obj: any): any {
         return Utils.deepCopy(obj);
@@ -164,7 +216,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 深度拷贝一个对象
-     * @param obj 
+     *
+     * @protected
+     * @static
+     * @param {*} obj
+     * @returns {*}
+     * @memberof FrameworkObject
      */
     protected static deepCopy(obj: any): any {
         return Utils.deepCopy(obj);
@@ -172,8 +229,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 深度优先搜索子节点
-     * @param parent 
-     * @param childName 
+     *
+     * @protected
+     * @param {cc.Node} parent
+     * @param {string} childName
+     * @returns {(cc.Node | null)}
+     * @memberof FrameworkObject
      */
     protected searchNode(parent: cc.Node, childName: string): cc.Node | null {
         return Utils.searchNode(parent, childName);
@@ -181,8 +242,13 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 深度优先搜索子节点
-     * @param parent 
-     * @param childName 
+     *
+     * @protected
+     * @static
+     * @param {cc.Node} parent
+     * @param {string} childName
+     * @returns {(cc.Node | null)}
+     * @memberof FrameworkObject
      */
     protected static searchNode(parent: cc.Node, childName: string): cc.Node | null {
         return Utils.searchNode(parent, childName);
@@ -190,8 +256,11 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 调试日志输出
-     * @param tag 
-     * @param msg 
+     *
+     * @protected
+     * @param {string} tag
+     * @param {*} msg
+     * @memberof FrameworkObject
      */
     protected LOGD(tag: string, msg: any): void {
         Utils.LOGD(tag, msg);
@@ -199,8 +268,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 调试日志输出
-     * @param tag 
-     * @param msg 
+     *
+     * @protected
+     * @static
+     * @param {string} tag
+     * @param {*} msg
+     * @memberof FrameworkObject
      */
     protected static LOGD(tag: string, msg: any): void {
         Utils.LOGD(tag, msg);
@@ -208,8 +281,11 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 出错日志输出
-     * @param tag 
-     * @param msg 
+     *
+     * @protected
+     * @param {string} tag
+     * @param {*} msg
+     * @memberof FrameworkObject
      */
     protected LOGE(tag: string, msg: any): void {
         Utils.LOGE(tag, msg);
@@ -217,8 +293,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 出错日志输出
-     * @param tag 
-     * @param msg 
+     *
+     * @protected
+     * @static
+     * @param {string} tag
+     * @param {*} msg
+     * @memberof FrameworkObject
      */
     protected static LOGE(tag: string, msg: any): void {
         Utils.LOGE(tag, msg);
@@ -226,8 +306,11 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 警告日志输出
-     * @param tag 
-     * @param msg 
+     *
+     * @protected
+     * @param {string} tag
+     * @param {*} msg
+     * @memberof FrameworkObject
      */
     protected LOGW(tag: string, msg: any): void {
         Utils.LOGW(tag, msg);
@@ -235,8 +318,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 警告日志输出
-     * @param tag 
-     * @param msg 
+     *
+     * @protected
+     * @static
+     * @param {string} tag
+     * @param {*} msg
+     * @memberof FrameworkObject
      */
     protected static LOGW(tag: string, msg: any): void {
         Utils.LOGW(tag, msg);
@@ -244,7 +331,10 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 播放音效
-     * @param url 
+     *
+     * @protected
+     * @param {string} url
+     * @memberof FrameworkObject
      */
     protected playEffect(url: string): void {
         SoundManager.getInstance().playEffectSound(url);
@@ -252,15 +342,23 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 播放音效
-     * @param url 
+     *
+     * @protected
+     * @param {string} url
+     * @param {boolean} [loop=true]
+     * @memberof FrameworkObject
      */
     protected playMusic(url: string, loop: boolean = true): void {
         SoundManager.getInstance().playMusic(url, loop);
     }
 
     /**
-     * 播放背景音效
-     * @param url 
+     * 播放音效
+     *
+     * @protected
+     * @static
+     * @param {string} url
+     * @memberof FrameworkObject
      */
     protected static playEffect(url: string): void {
         SoundManager.getInstance().playEffectSound(url);
@@ -268,7 +366,12 @@ export class FrameworkObject extends cc.Object {
 
     /**
      * 播放背景音效
-     * @param url 
+     *
+     * @protected
+     * @static
+     * @param {string} url
+     * @param {boolean} [loop=true]
+     * @memberof FrameworkObject
      */
     protected static playMusic(url: string, loop: boolean = true): void {
         SoundManager.getInstance().playMusic(url, loop);

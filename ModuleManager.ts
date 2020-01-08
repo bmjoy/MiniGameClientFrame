@@ -21,7 +21,14 @@ export class ModuleManager extends FrameworkObject {
     protected constructor() {
         super()
     }
-
+    
+    /**
+     * 获取实例
+     *
+     * @static
+     * @returns {ModuleManager}
+     * @memberof ModuleManager
+     */
     public static getInstance(): ModuleManager {
         if (this.instance == null) {
             this.instance = new ModuleManager();
@@ -31,7 +38,12 @@ export class ModuleManager extends FrameworkObject {
 
     /**
      * 注册模块
-     * @param moduleName 
+     *
+     * @param {string} moduleName
+     * @param {new () => FrameworkObject} ModuleCtr
+     * @param {*} [initParams]
+     * @returns {FrameworkObject}
+     * @memberof ModuleManager
      */
     public registerModule(moduleName: string, ModuleCtr: new () => FrameworkObject, initParams?: any): FrameworkObject {
         if (this.modules.has(moduleName)) {
@@ -49,7 +61,10 @@ export class ModuleManager extends FrameworkObject {
 
     /**
      * 获取模块
-     * @param moduleName 
+     *
+     * @param {string} moduleName
+     * @returns {MoudleStruct}
+     * @memberof ModuleManager
      */
     public getModule(moduleName: string): MoudleStruct {
         return this.modules.get(moduleName);
@@ -57,7 +72,10 @@ export class ModuleManager extends FrameworkObject {
 
     /**
      * 移除模块
-     * @param moduleName 
+     *
+     * @param {string} moduleName
+     * @returns
+     * @memberof ModuleManager
      */
     public removeModule(moduleName: string) {
         if (!this.modules.has(moduleName)) {

@@ -15,7 +15,7 @@ export class SystemUtil extends cc.Object {
 
     private readonly TAG: string = "SystemUtil";
     protected static readonly _instance: SystemUtil = new SystemUtil();
-    protected _systemInfo: SystemInfo;
+    protected systemInfo: SystemInfo;
 
     private constructor() {
         super();
@@ -24,192 +24,386 @@ export class SystemUtil extends cc.Object {
         }
     }
 
+    /**
+     * 获取实例
+     *
+     * @static
+     * @returns {SystemUtil}
+     * @memberof SystemUtil
+     */
     public static getInstance(): SystemUtil {
         return this._instance;
     }
 
+    /**
+     * 初始化
+     *
+     * @param {SystemInfo} systemInfo
+     * @memberof SystemUtil
+     */
     public init(systemInfo: SystemInfo) {
-        this._systemInfo = systemInfo;
+        this.systemInfo = systemInfo;
     }
 
-    // 手机品牌
+    /**
+     * 手机品牌
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SystemUtil
+     */
     public get brand(): string {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "1.5.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "1.5.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return "unknown";
         }
-        return this._systemInfo.brand;
+        return this.systemInfo.brand;
     }
-    // 手机型号
+    
+    /**
+     * 手机型号
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SystemUtil
+     */
     public get model(): string {
-        return this._systemInfo.model;
+        return this.systemInfo.model;
     }
-    // 设备像素比
+    
+    /**
+     * 设备像素比
+     *
+     * @readonly
+     * @type {number}
+     * @memberof SystemUtil
+     */
     public get pixelRatio(): number {
-        return this._systemInfo.pixelRatio;
+        return this.systemInfo.pixelRatio;
     }
-    // 屏幕宽度
+    
+    /**
+     * 屏幕宽度
+     *
+     * @readonly
+     * @type {number}
+     * @memberof SystemUtil
+     */
     public get screenWidth(): number {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "1.1.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "1.1.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return 0;
         }
-        return this._systemInfo.screenWidth;
+        return this.systemInfo.screenWidth;
     }
-    // 屏幕高度
+    
+    /**
+     * 屏幕高度
+     *
+     * @readonly
+     * @type {number}
+     * @memberof SystemUtil
+     */
     public get screenHeight(): number {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "1.1.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "1.1.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return 0;
         }
-        return this._systemInfo.screenHeight;
+        return this.systemInfo.screenHeight;
     }
-    // 可使用窗口宽度
+    
+    /**
+     * 可使用窗口宽度
+     *
+     * @readonly
+     * @type {number}
+     * @memberof SystemUtil
+     */
     public get windowWidth(): number {
-        return this._systemInfo.windowWidth;
+        return this.systemInfo.windowWidth;
     }
-    // 可使用窗口高度
+    
+    /**
+     * 可使用窗口高度
+     *
+     * @readonly
+     * @type {number}
+     * @memberof SystemUtil
+     */
     public get windowHeight(): number {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "1.1.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "1.1.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return 0;
         }
-        return this._systemInfo.windowHeight;
+        return this.systemInfo.windowHeight;
     }
-    // 状态栏高度
+    
+    /**
+     * 状态栏高度
+     *
+     * @readonly
+     * @type {number}
+     * @memberof SystemUtil
+     */
     public get statusBarHeight(): number {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "1.9.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "1.9.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return 0;
         }
-        return this._systemInfo.statusBarHeight;
+        return this.systemInfo.statusBarHeight;
     }
-    // 微信设置的语言
+    
+    /**
+     * 微信设置的语言
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SystemUtil
+     */
     public get language(): string {
-        return this._systemInfo.language;
+        return this.systemInfo.language;
     }
-    // 微信版本号
+    
+    /**
+     * 微信版本号
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SystemUtil
+     */
     public get version(): string {
-        return this._systemInfo.version;
+        return this.systemInfo.version;
     }
-    // 操作系统版本
+    
+    /**
+     * 操作系统版本
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SystemUtil
+     */
     public get system(): string {
-        return this._systemInfo.system;
+        return this.systemInfo.system;
     }
-    // 客户端平台
+    
+    /**
+     * 客户端平台
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SystemUtil
+     */
     public get platform(): string {
-        return this._systemInfo.platform;
+        return this.systemInfo.platform;
     }
-    // 用户字体大小设置
+    
+    /**
+     * 用户字体大小设置
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SystemUtil
+     */
     public get fontSizeSetting(): string {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "1.5.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "1.5.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return "unknown";
         }
-        return this._systemInfo.fontSizeSetting;
+        return this.systemInfo.fontSizeSetting;
     }
-    // 客户端基础库版本
+    
+    /**
+     * 客户端基础库版本
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SystemUtil
+     */
     public get sdkVersion(): string {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "1.1.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "1.1.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return "unknown";
         }
-        return this._systemInfo.SDKVersion;
+        return this.systemInfo.SDKVersion;
     }
-    // 设备性能等级
+    
+    /**
+     * 设备性能等级
+     *
+     * @readonly
+     * @type {number}
+     * @memberof SystemUtil
+     */
     public get benchmarkLevel(): number {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "1.8.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "1.8.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return -1;
         }
-        return this._systemInfo.benchmarkLevel;
+        return this.systemInfo.benchmarkLevel;
     }
-    // 允许微信使用相册的开关
+    
+    /**
+     * 允许微信使用相册的开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get albumAuthorized(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.albumAuthorized;
+        return this.systemInfo.albumAuthorized;
     }
-    // 允许微信使用摄像头的开关
+    
+    /**
+     * 允许微信使用摄像头的开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get cameraAuthorized(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.cameraAuthorized;
+        return this.systemInfo.cameraAuthorized;
     }
-    // 允许微信使用定位的开关
+    
+    /**
+     * 允许微信使用定位的开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get locationAuthorized(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.locationAuthorized;
+        return this.systemInfo.locationAuthorized;
     }
-    // 允许微信使用麦克风的开关
+    
+    /**
+     * 允许微信使用麦克风的开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get microphoneAuthorized(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.microphoneAuthorized;
+        return this.systemInfo.microphoneAuthorized;
     }
-    // 允许微信通知的开关
+    
+    /**
+     * 允许微信通知的开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get notificationAuthorized(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.notificationAuthorized;
+        return this.systemInfo.notificationAuthorized;
     }
-    // 允许微信通知带有提醒的开关
+    
+    /**
+     * 允许微信通知带有提醒的开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get notificationAlertAuthorized(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.notificationAlertAuthorized;
+        return this.systemInfo.notificationAlertAuthorized;
     }
-    // 允许微信通知带有标记的开关
+    
+    /**
+     * 允许微信通知带有标记的开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get notificationBadgeAuthorized(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.notificationBadgeAuthorized;
+        return this.systemInfo.notificationBadgeAuthorized;
     }
-    // 允许微信通知带有声音的开关
+    
+    /**
+     * 允许微信通知带有声音的开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get notificationSoundAuthorized(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.notificationSoundAuthorized;
+        return this.systemInfo.notificationSoundAuthorized;
     }
-    // 蓝牙的系统开关
+    
+    /**
+     * 蓝牙的系统开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get bluetoothEnabled(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.bluetoothEnabled;
+        return this.systemInfo.bluetoothEnabled;
     }
-    // 地理位置的系统开关
+    
+    /**
+     * 地理位置的系统开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get locationEnabled(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.locationEnabled;
+        return this.systemInfo.locationEnabled;
     }
-    // 的系统开关
+    
+    /**
+     * wifi系统开关
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof SystemUtil
+     */
     public get wifiEnabled(): boolean {
-        if (!this._systemInfo.SDKVersion || Utils.compareVersion(this._systemInfo.SDKVersion, "2.6.0") < 0) {
+        if (!this.systemInfo.SDKVersion || Utils.compareVersion(this.systemInfo.SDKVersion, "2.6.0") < 0) {
             Utils.LOGE(this.TAG, "the wechat sdk version too low");
             return true;
         }
-        return this._systemInfo.wifiEnabled;
+        return this.systemInfo.wifiEnabled;
     }
 }

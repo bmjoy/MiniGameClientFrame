@@ -40,6 +40,13 @@ export class SoundManager extends cc.Object {
         NotificationCenter.getInstance().listen(CommonEvent.COMMON_EVENT_GAME_ON_HIDE, this.onCommonEventGameOnHide, this);
     }
 
+    /**
+     * 进入前台恢复背景音效
+     *
+     * @protected
+     * @returns
+     * @memberof SoundManager
+     */
     protected onCommonEventGameOnShow() {
         if (this._isStopMusic || this._mute) {
             return;
@@ -47,12 +54,21 @@ export class SoundManager extends cc.Object {
         this.resumeMusic();
     }
 
+    /**
+     * 进入后台暂停背景音效
+     *
+     * @protected
+     * @memberof SoundManager
+     */
     protected onCommonEventGameOnHide() {
         this.pauseMusic();
     }
 
     /**
      * 初始化音效状态
+     *
+     * @protected
+     * @memberof SoundManager
      */
     protected initStatus() {
         let musicStatus: string = Utils.getStorageSync(KEY_STORAGE_MUSIC_STATUS, "0");
@@ -71,6 +87,9 @@ export class SoundManager extends cc.Object {
 
     /**
      * 是否静音
+     *
+     * @returns {boolean}
+     * @memberof SoundManager
      */
     public isMute(): boolean {
         return this._mute;
@@ -78,6 +97,9 @@ export class SoundManager extends cc.Object {
 
     /**
      * 是否关闭音乐
+     *
+     * @returns
+     * @memberof SoundManager
      */
     public isStopMusic() {
         return this._isStopMusic;
@@ -85,6 +107,9 @@ export class SoundManager extends cc.Object {
 
     /**
      * 是否关闭音效
+     *
+     * @returns
+     * @memberof SoundManager
      */
     public isStopEffect() {
         return this._isStopEffect;
@@ -92,8 +117,10 @@ export class SoundManager extends cc.Object {
 
     /**
      * 播放音乐
-     * @param url 
-     * @param loop 
+     *
+     * @param {string} url
+     * @param {boolean} [loop=true]
+     * @memberof SoundManager
      */
     public playMusic(url: string, loop: boolean = true) {
         if (!url) {
@@ -127,9 +154,12 @@ export class SoundManager extends cc.Object {
 
     /**
      * 播放音效
-     * @param url 
+     *
+     * @param {string} url
+     * @returns
+     * @memberof SoundManager
      */
-    public playEffectSound(url) {
+    public playEffectSound(url: string) {
         if (this._mute || this._isStopEffect) {
             return;
         }
@@ -158,6 +188,8 @@ export class SoundManager extends cc.Object {
 
     /**
      * 暂停音乐
+     *
+     * @memberof SoundManager
      */
     public pauseMusic() {
         if (this._bgmAudioId >= 0) {
@@ -167,6 +199,8 @@ export class SoundManager extends cc.Object {
 
     /**
      * 停止音乐
+     *
+     * @memberof SoundManager
      */
     public stopMusic() {
         if (this._bgmAudioId >= 0) {
@@ -177,6 +211,8 @@ export class SoundManager extends cc.Object {
 
     /**
      * 恢复音乐
+     *
+     * @memberof SoundManager
      */
     public resumeMusic() {
         if (this._bgmAudioId >= 0) {
@@ -186,6 +222,8 @@ export class SoundManager extends cc.Object {
 
     /**
      * 关闭音乐
+     *
+     * @memberof SoundManager
      */
     public closeMusic() {
         this._isStopMusic = true;
@@ -195,6 +233,8 @@ export class SoundManager extends cc.Object {
 
     /**
      * 开启音乐
+     *
+     * @memberof SoundManager
      */
     public openMusic() {
         this._isStopMusic = false;
@@ -203,7 +243,9 @@ export class SoundManager extends cc.Object {
     }
 
     /**
-     *  关闭音效
+     * 关闭音效
+     *
+     * @memberof SoundManager
      */
     public closeEffect() {
         this._isStopEffect = true;
@@ -213,6 +255,8 @@ export class SoundManager extends cc.Object {
 
     /**
      * 开启音效
+     *
+     * @memberof SoundManager
      */
     public openEffect() {
         this._isStopEffect = false;
@@ -221,6 +265,8 @@ export class SoundManager extends cc.Object {
 
     /**
      * 静音
+     *
+     * @memberof SoundManager
      */
     public mute() {
         this._mute = true;
@@ -231,6 +277,8 @@ export class SoundManager extends cc.Object {
 
     /**
      * 关闭静音
+     *
+     * @memberof SoundManager
      */
     public unmute() {
         this._mute = false;

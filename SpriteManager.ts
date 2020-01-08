@@ -24,6 +24,13 @@ export class SpriteManager extends cc.Object {
         return this.instance;
     }
 
+    /**
+     * 为节点上的精灵设置纹理
+     *
+     * @param {cc.Node} node
+     * @param {string} url
+     * @memberof SpriteManager
+     */
     public setSpriteFrameForNode(node: cc.Node, url: string) {
         let callback: Function = (node: cc.Node, spriteFrame: cc.SpriteFrame) => {
             if (cc.isValid(node) && cc.isValid(node.getComponent(cc.Sprite))) {
@@ -47,6 +54,13 @@ export class SpriteManager extends cc.Object {
         }
     }
 
+    /**
+     * 为精灵设置纹理
+     *
+     * @param {cc.Sprite} sprite
+     * @param {string} url
+     * @memberof SpriteManager
+     */
     public setSpriteFrameForSprite(sprite: cc.Sprite, url: string) {
         let callback: Function = (sprite: cc.Sprite, spriteFrame: cc.SpriteFrame) => {
             if (cc.isValid(sprite)) {

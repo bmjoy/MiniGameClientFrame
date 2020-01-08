@@ -39,10 +39,24 @@ export class SceneManager extends cc.Object {
         }
     }
 
+    /**
+     * 获取实例
+     *
+     * @static
+     * @returns {SceneManager}
+     * @memberof SceneManager
+     */
     public static getInstance(): SceneManager {
         return this.instance;
     }
 
+    /**
+     * 初始化
+     *
+     * @param {SceneParams[]} params
+     * @param {string} currSceneName
+     * @memberof SceneManager
+     */
     public init(params: SceneParams[], currSceneName: string): void {
         if (this.hasInit) {
             Utils.LOGW(this.TAG, "You should never call this method again, unless you know what you are doing");
@@ -58,6 +72,18 @@ export class SceneManager extends cc.Object {
         (this._curSceneName == null) && Utils.LOGE(this.TAG, "current scene not find in params");
     }
 
+    /**
+     * 跳转场景
+     *
+     * @param {string} from
+     * @param {string} to
+     * @param {() => void} [onBeforeLoadScene]
+     * @param {() => void} [onLaunched]
+     * @param {(res: ChangeSceneResult) => void} [fail]
+     * @param {(completed: number, total: number, item: any) => void} [progress]
+     * @returns {void}
+     * @memberof SceneManager
+     */
     public changeScene(from: string, to: string, onBeforeLoadScene?: () => void, onLaunched?: () => void, fail?: (res: ChangeSceneResult) => void, progress?: (completed: number, total: number, item: any) => void): void {
         if (!this.hasInit) {
             Utils.LOGE(this.TAG, "You should call init method before calling changeScene method");
