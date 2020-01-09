@@ -26,11 +26,11 @@ export interface ChangeSceneResult {
 
 export class SceneManager extends cc.Object {
 
-    private readonly TAG: string = "SceneManager";
-    private static instance: SceneManager = new SceneManager();
-    private sceneParmas: SceneParams[] = null;
-    private hasInit: boolean = false;
-    private _curSceneName: string = null;
+    protected readonly TAG: string = "SceneManager";
+    protected static instance: SceneManager = new SceneManager();
+    protected sceneParmas: SceneParams[] = null;
+    protected hasInit: boolean = false;
+    protected curSceneName: string = null;
 
     private constructor() {
         super();
@@ -65,11 +65,21 @@ export class SceneManager extends cc.Object {
         this.hasInit = true;
         for (let i = 0; i < params.length; i++) {
             if (currSceneName == params[i].from) {
-                this._curSceneName = currSceneName;
+                this.curSceneName = currSceneName;
                 break;
             }
         }
-        (this._curSceneName == null) && Utils.LOGE(this.TAG, "current scene not find in params");
+        (this.curSceneName == null) && Utils.LOGE(this.TAG, "current scene not find in params");
+    }
+
+    /**
+     * 获取当前场景名称
+     *
+     * @returns {string}
+     * @memberof SceneManager
+     */
+    public getCurSceneName(): string {
+        return this.curSceneName;
     }
 
     /**
@@ -89,8 +99,8 @@ export class SceneManager extends cc.Object {
             Utils.LOGE(this.TAG, "You should call init method before calling changeScene method");
             return;
         }
-        if (this._curSceneName != from) {
-            Utils.LOGE(this.TAG, "current scene is " + this._curSceneName + " is not " + from);
+        if (this.curSceneName != from) {
+            Utils.LOGE(this.TAG, "current scene is " + this.curSceneName + " is not " + from);
             return;
         }
         for (let i = 0; i < this.sceneParmas.length; i++) {
@@ -104,7 +114,7 @@ export class SceneManager extends cc.Object {
                                 fail && fail({ errMsg: "load scene res error", code: ChangeSceneResultCode.LOAD_SCENE_RES_ERROR });
                             } else {
                                 cc.director.loadScene(params.to[j], onLaunched);
-                                this._curSceneName = to;
+                                this.curSceneName = to;
                             }
                         });
                         return;
