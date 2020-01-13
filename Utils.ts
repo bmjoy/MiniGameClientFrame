@@ -1,3 +1,5 @@
+import { SystemUtil } from "./SystemUtil";
+
 /*================================================================
  * Description 工具集合
  * Email huliuworld@yahoo.com
@@ -270,7 +272,7 @@ export class Utils extends cc.Object {
     }
 
     /**
-     * 创建微信授权按钮
+     * 创建微信授权按钮(微信)
      *
      * @static
      * @param {wx.CreateClubButtonParams} params
@@ -280,6 +282,43 @@ export class Utils extends cc.Object {
     public static createGameClubButton(params: wx.CreateClubButtonParams): wx.GameClubButton {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
             return wx.createGameClubButton(params);
+        }
+    }
+    
+    /**
+     * 世界坐标转换成微信坐标(微信)
+     *
+     * @static
+     * @param {cc.Vec2} pos
+     * @returns {cc.Vec2}
+     * @memberof Utils
+     */
+    public static worldPosToWechatPos(pos: cc.Vec2): cc.Vec2 {
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            let wxScreenWidth = SystemUtil.getInstance().screenWidth;
+            let wxScreenHeight = SystemUtil.getInstance().screenHeight;
+            let screenWidth = cc.winSize.width;
+            let screenHeight = cc.winSize.height;
+            let rateW = wxScreenWidth / screenWidth;
+            let rateH = wxScreenHeight / screenHeight;
+            return new cc.Vec2(pos.x * rateW, (screenHeight - pos.y) * rateH);
+        }
+        
+    }
+
+    /**
+     * 游戏像素转换成微信像素(微信)
+     *
+     * @static
+     * @param {number} px
+     * @param {("width" | "height")} type
+     * @returns {number}
+     * @memberof Utils
+     */
+    public static gamePxToWechatPx(px: number, type: "width" | "height"): number {
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            if (type == "width") return px / cc.winSize.width * SystemUtil.getInstance().screenWidth;
+            if (type == "height") return px / cc.winSize.height * SystemUtil.getInstance().screenHeight;
         }
     }
 }

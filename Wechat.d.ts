@@ -184,11 +184,11 @@ declare namespace wx {
         height: number,
         backgroundColor?: string,
         borderColor?: string,
-        borderWidth: number,
-        borderRadius: number,
-        textAlign: "left" | "center" | "right",
-        fontSize: number,
-        lineHeight: number
+        borderWidth?: number,
+        borderRadius?: number,
+        textAlign?: "left" | "center" | "right",
+        fontSize?: number,
+        lineHeight?: number
     }
     export class UserInfoButton {
         type: "text" | "image";
@@ -292,10 +292,10 @@ declare namespace wx {
     // --游戏圈
     interface CreateClubButtonParams {
         type: "text" | "image",
+        style: Style,
         text?: string,
         image?: string,
-        style: Style,
-        icon: string
+        icon?: string
     }
     export class GameClubButton {
         icon: "green" | "white" | "dark" | "light";
