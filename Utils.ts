@@ -167,45 +167,6 @@ export class Utils extends cc.Object {
     }
 
     /**
-     * 权限检测(微信)
-     *
-     * @static
-     * @param {("userInfo" | "userLocation" | "werun" | "writePhotosAlbum")} type
-     * @param {(authorize: boolean)=>void} [cb]
-     * @memberof Utils
-     */
-    public static isAuthorWechat(type: "userInfo" | "userLocation" | "werun" | "writePhotosAlbum", cb?: (authorize: boolean)=>void) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            wx.getSetting({
-                success: (res: any) => {
-                    cb && type === "userInfo" && cb(res.authSetting["scope.userInfo"]);
-                    cb && type === "userLocation" && cb(res.authSetting["scope.userLocation"]);
-                    cb && type === "werun" && cb(res.authSetting["scope.werun"]);
-                    cb && type === "writePhotosAlbum" && cb(res.authSetting["scope.writePhotosAlbum"]);
-                },
-                fail: (res: any) => {
-                    this.LOGE(this.TAG, JSON.stringify(res));
-                }
-            });
-        } else {
-            this.LOGW(this.TAG, "不是微信平台");
-        }
-    }
-
-    /**
-     * 获取用户信息(微信)
-     *
-     * @static
-     * @param {wx.GetUserInfoParams} cb
-     * @memberof Utils
-     */
-    public static getUserInfoWechat(cb: wx.GetUserInfoParams) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            wx.getUserInfo(cb);
-        }
-    }
-
-    /**
      * 格式化字符串
      *
      * @static
@@ -266,5 +227,59 @@ export class Utils extends cc.Object {
             newObj[key] = this.deepCopy(obj[key]);
         }
         return newObj;
+    }
+
+    //----微信
+    /**
+     * 权限检测(微信)
+     *
+     * @static
+     * @param {("userInfo" | "userLocation" | "werun" | "writePhotosAlbum")} type
+     * @param {(authorize: boolean)=>void} [cb]
+     * @memberof Utils
+     */
+    public static isAuthorWechat(type: "userInfo" | "userLocation" | "werun" | "writePhotosAlbum", cb?: (authorize: boolean)=>void) {
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            wx.getSetting({
+                success: (res: any) => {
+                    cb && type === "userInfo" && cb(res.authSetting["scope.userInfo"]);
+                    cb && type === "userLocation" && cb(res.authSetting["scope.userLocation"]);
+                    cb && type === "werun" && cb(res.authSetting["scope.werun"]);
+                    cb && type === "writePhotosAlbum" && cb(res.authSetting["scope.writePhotosAlbum"]);
+                },
+                fail: (res: any) => {
+                    this.LOGE(this.TAG, JSON.stringify(res));
+                }
+            });
+        } else {
+            this.LOGW(this.TAG, "不是微信平台");
+        }
+    }
+
+    /**
+     * 获取用户信息(微信)
+     *
+     * @static
+     * @param {wx.GetUserInfoParams} cb
+     * @memberof Utils
+     */
+    public static getUserInfoWechat(cb: wx.GetUserInfoParams) {
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            wx.getUserInfo(cb);
+        }
+    }
+
+    /**
+     * 创建微信授权按钮
+     *
+     * @static
+     * @param {wx.CreateClubButtonParams} params
+     * @returns {wx.GameClubButton}
+     * @memberof Utils
+     */
+    public static createGameClubButton(params: wx.CreateClubButtonParams): wx.GameClubButton {
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+            return wx.createGameClubButton(params);
+        }
     }
 }

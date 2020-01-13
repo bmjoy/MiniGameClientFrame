@@ -289,6 +289,27 @@ declare namespace wx {
     export function getOpenDataContext(): OpenDataContext;
     export function onMessage(cb: (res: { key: string, value: number | string | boolean }) => void);
 
+    // --游戏圈
+    interface CreateClubButtonParams {
+        type: "text" | "image",
+        text?: string,
+        image?: string,
+        style: Style,
+        icon: string
+    }
+    export class GameClubButton {
+        icon: "green" | "white" | "dark" | "light";
+        type: "text" | "image";
+        text: string;
+        image: string;
+        style: Style;
+        show();
+        hide();
+        destroy();
+        onTap(callback: () => void);
+        offTap(callback: () => void);
+    }
+    export function createGameClubButton(params: CreateClubButtonParams): GameClubButton;
 }
 
 
