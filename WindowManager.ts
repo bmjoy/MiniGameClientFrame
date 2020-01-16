@@ -50,7 +50,7 @@ export class WindowManager extends FrameworkObject {
         if (this.instance == null) {
             this.instance = new WindowManager();
         }
-        if (this.instance.maskBgPath != maskBgPath) {
+        if (maskBgPath && this.instance.maskBgPath != maskBgPath) {
             this.instance.maskBgPath = maskBgPath;
             this.instance.createMaskNode();
         }
