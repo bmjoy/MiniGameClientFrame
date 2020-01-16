@@ -16,7 +16,7 @@ const { ccclass, property } = cc._decorator;
 export default class AuthComponent extends FrameworkComponent {
 
     protected TAG: string = "AuthComponent";
-    protected authBtn: any = null;
+    protected authBtn: wx.UserInfoButton = null;
     @property(cc.Boolean)
     canRefuse: boolean = false;
     @property(cc.String)
@@ -45,25 +45,25 @@ export default class AuthComponent extends FrameworkComponent {
 
     onEnable() {
         if (cc.sys.platform == cc.sys.WECHAT_GAME && this.authBtn) {
-            (this.authBtn as wx.UserInfoButton).show();
+            this.authBtn.show();
         }
     }
 
     onDisable() {
         if (cc.sys.platform == cc.sys.WECHAT_GAME && this.authBtn) {
-            (this.authBtn as wx.UserInfoButton).hide();
+            this.authBtn.hide();
         }
     }
 
     onDestroy() {
         if (cc.sys.platform == cc.sys.WECHAT_GAME && this.authBtn) {
-            (this.authBtn as wx.UserInfoButton).destroy();
+            this.authBtn.destroy();
         }
     }
 
     protected onEventAuthSuccess() {
         if (cc.sys.platform == cc.sys.WECHAT_GAME && this.authBtn) {
-            (this.authBtn as wx.UserInfoButton).destroy();
+            this.authBtn.destroy();
         }
     }
 

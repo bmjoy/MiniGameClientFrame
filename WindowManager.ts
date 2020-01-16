@@ -32,7 +32,7 @@ export class WindowManager extends FrameworkObject {
     protected static instance: WindowManager = null;
     protected windowList: WindowInfo[] = [];
     protected maskNode: cc.Node = null;
-    protected maskBgPath: string = "Common/common_mask_1";
+    protected maskBgPath: string = "Texture/Common/common_mask_1";
     protected windowMaxIndex: number = 100;
 
     protected constructor() {
@@ -46,9 +46,13 @@ export class WindowManager extends FrameworkObject {
      * @returns {WindowManager}
      * @memberof WindowManager
      */
-    public static getInstance(): WindowManager {
+    public static getInstance(maskBgPath?: string): WindowManager {
         if (this.instance == null) {
             this.instance = new WindowManager();
+        }
+        if (this.instance.maskBgPath != maskBgPath) {
+            this.instance.maskBgPath = maskBgPath;
+            this.instance.createMaskNode();
         }
         return this.instance;
     }
@@ -221,6 +225,9 @@ export class WindowManager extends FrameworkObject {
      * @memberof WindowManager
      */
     protected createMaskNode() {
+        if (cc.isValid(this.maskNode)) {
+            this.maskNode.destroy();
+        }
         this.maskNode = new cc.Node();
         this.maskNode.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
         this.maskNode.width = cc.winSize.width;

@@ -215,6 +215,7 @@ declare namespace wx {
         withCredentials?: boolean,              // 是否带上登录态信息
         lang?: "en" | "zh_CN" | "zh_TW",        // 描述用户信息的语言 default en
         success?: (res: {
+            errMsg: string,
             userInfo: UserInfo,
             rawData: string,
             signature: string,

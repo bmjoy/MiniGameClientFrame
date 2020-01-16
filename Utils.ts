@@ -262,12 +262,12 @@ export class Utils extends cc.Object {
      * 获取用户信息(微信)
      *
      * @static
-     * @param {wx.GetUserInfoParams} cb
+     * @param {wx.GetUserInfoParams} params
      * @memberof Utils
      */
-    public static getUserInfoWechat(cb: wx.GetUserInfoParams) {
+    public static getUserInfoWechat(params: wx.GetUserInfoParams) {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            wx.getUserInfo(cb);
+            wx.getUserInfo(params);
         }
     }
 
