@@ -17,13 +17,14 @@ interface WindowInfo {
 
 
 interface OpenWindowParams {
-    isSequence?: boolean;              // 是否在队列等待 default true
-    hideOther?: boolean;               // 是否隐藏其他界面 default false
-    data?: any;                        // 参数
-    touchMaskClose?: boolean;          // 点击遮罩关闭 default false
-    repeat?: boolean;                  // 是的支持在队列中存在多个 default true
-    needMask?: boolean;                // 是否需要mask default true
-    errorCallback?: Function           // 失败回调
+    isSequence?: boolean;               // 是否在队列等待 default true
+    hideOther?: boolean;                // 是否隐藏其他界面 default false
+    data?: any;                         // 参数
+    touchMaskClose?: boolean;           // 点击遮罩关闭 default false
+    repeat?: boolean;                   // 是的支持在队列中存在多个 default true
+    needMask?: boolean;                 // 是否需要mask default true
+    maskOpacity?: number;                // mask透明度
+    errorCallback?: Function            // 失败回调
 }
 
 export class WindowManager extends FrameworkObject {
@@ -213,6 +214,7 @@ export class WindowManager extends FrameworkObject {
                     this.maskNode.active = false;
                 } else {
                     this.maskNode.active = true;
+                    this.maskNode.opacity = windowInfo.params.maskOpacity || 255;
                 }
             }
         }
