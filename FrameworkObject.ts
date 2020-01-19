@@ -1,6 +1,6 @@
 /*================================================================
  * Description 自定义对象基类
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sat Jul 13 2019 2:50:34
  * Copyright (c) 2019 刘虎
 ================================================================*/

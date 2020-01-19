@@ -1,6 +1,6 @@
 /*================================================================
  * Description 微信API
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Wed Jul 10 2019 0:1:7
  * Copyright (c) 2019 刘虎
 ================================================================*/

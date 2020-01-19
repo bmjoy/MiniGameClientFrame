@@ -1,6 +1,6 @@
 /*================================================================
  * Description 微信分享相关接口
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sun Sep 15 2019 11:59:28
  * Copyright (c) 2019 刘虎
 ================================================================*/

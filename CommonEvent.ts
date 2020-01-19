@@ -1,6 +1,6 @@
 /*================================================================
  * Description 公共事件
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sun Nov 11 2018 11:0:58
  * Copyright (c) 2018 刘虎
 ================================================================*/

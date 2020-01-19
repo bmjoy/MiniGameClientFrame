@@ -1,6 +1,6 @@
 /*================================================================
  * Description 全局消息模块
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sun Nov 11 2018 11:2:21
  * Copyright (c) 2018 刘虎
 ================================================================*/

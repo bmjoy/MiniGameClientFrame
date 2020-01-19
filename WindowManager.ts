@@ -1,6 +1,6 @@
 /*================================================================
  * Description 弹窗管理器
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Fri Aug 30 2019 22:16:41
  * Copyright (c) 2019 刘虎
 ================================================================*/
@@ -44,6 +44,7 @@ export class WindowManager extends FrameworkObject {
      * 获取实例
      *
      * @static
+     * @param {string} maskBgPath
      * @returns {WindowManager}
      * @memberof WindowManager
      */

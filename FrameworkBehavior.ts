@@ -1,6 +1,6 @@
 /*================================================================
  * Description 基础组件
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sun Sep 22 2019 0:51:37
  * Copyright (c) 2019 刘虎
 ================================================================*/
@@ -11,7 +11,7 @@ export class FrameworkBehavior extends FrameworkObject {
 
     protected exportFunctionNameList: string[] = [];
     protected object: cc.Object = null;
-    protected readonly TAG: string = "FrameworkBehavior"
+    protected readonly TAG: string = "FrameworkBehavior";
 
     /**
      * 自动绑定

@@ -1,11 +1,11 @@
-import { SystemUtil } from "./SystemUtil";
-
 /*================================================================
  * Description 工具集合
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sun Nov 11 2018 11:4:17
  * Copyright (c) 2018 刘虎
 ================================================================*/
+
+import { SystemUtil } from "./SystemUtil";
 
 export class Utils extends cc.Object {
 

@@ -1,6 +1,6 @@
 /*================================================================
  * Description 模块管理器
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sun Sep 22 2019 12:46:12
  * Copyright (c) 2019 刘虎
 ================================================================*/

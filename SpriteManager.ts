@@ -1,6 +1,6 @@
 /*================================================================
  * Description 图集管理
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Thu Aug 01 2019 22:44:20
  * Copyright (c) 2019 刘虎
 ================================================================*/

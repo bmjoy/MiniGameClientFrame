@@ -1,6 +1,6 @@
 /*================================================================
  * Description http请求网络
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Fri Mar 22 2019 0:36:36
  * Copyright (c) 2019 刘虎
 ================================================================*/

@@ -1,6 +1,6 @@
 /*================================================================
  * Description 用户授权(微信)
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Mon Jul 15 2019 23:4:44
  * Copyright (c) 2019 刘虎
 ================================================================*/

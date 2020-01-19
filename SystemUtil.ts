@@ -1,6 +1,6 @@
 /*================================================================
  * Description 系统信息
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sun Nov 11 2018 11:3:26
  * Copyright (c) 2018 刘虎
 ================================================================*/

@@ -1,6 +1,6 @@
 /*================================================================
  * Description 音效管理器
- * Email huliuworld@yahoo.com
+ * Email huxiaoheigame@gmail.com
  * Created on Sun Dec 09 2018 16:55:43
  * Copyright (c) 2018 刘虎
 ================================================================*/
