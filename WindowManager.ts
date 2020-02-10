@@ -23,7 +23,8 @@ interface OpenWindowParams {
     touchMaskClose?: boolean;           // 点击遮罩关闭 default false
     repeat?: boolean;                   // 是的支持在队列中存在多个 default true
     needMask?: boolean;                 // 是否需要mask default true
-    maskOpacity?: number;                // mask透明度
+    maskOpacity?: number;               // mask透明度
+    closeCallback?: Function;           // 关闭回调
     errorCallback?: Function            // 失败回调
 }
 
@@ -115,6 +116,7 @@ export class WindowManager extends FrameworkObject {
                 script && typeof script["willDestroy"] === "function" && script["willDestroy"]();
                 this.windowList.splice(index, 1);
                 windowInfo.node.destroy();
+                windowInfo.params && typeof windowInfo.params.closeCallback == "function" && windowInfo.params.closeCallback();
                 this.checkShowWindow();
                 return;
             }
