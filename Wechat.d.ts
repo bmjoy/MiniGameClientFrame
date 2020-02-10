@@ -311,6 +311,59 @@ declare namespace wx {
         offTap(callback: () => void);
     }
     export function createGameClubButton(params: CreateClubButtonParams): GameClubButton;
+
+    // --广告
+    export class BannerAd {
+        style: {top: number, left: number, width: number, height: number, realWidth: number, realHeight: number};
+        show(): Promise;
+        hide();
+        destroy();
+        onResize(callback: () => void);
+        offResize(callback?: () => void);
+        onLoad(callback: () => void);
+        offLoad(callback?: () => void);
+        onError(callback: (res: {errMsg: string, errCode: number}) => void);
+        offError(callback?: () => void);
+    }
+    export function createBannerAd(params: {adUnitId: string, adIntervals?: boolean, style: {left: number, top: number, width: number, height: number}}): BannerAd;
+
+    export class RewardedVideoAd {
+        load(): Promise;
+        show(): Promise;
+        destroy();
+        onLoad(callback: () => void);
+        offLoad(callback?: () => void);
+        onError(callback: (res: {errMsg: string, errCode: number}) => void);
+        offError(callback?: () => void);
+        onClose(callback: (isEnded: boolean) => void);
+        offClose(callback?: () => void);
+    }
+    export function createRewardedVideoAd(params: {adUnitId: string, multiton?: boolean}): RewardedVideoAd;
+
+    export class InterstitialAd {
+        load(): Promise;
+        show(): Promise;
+        destroy();
+        onLoad(callback: () => void);
+        offLoad(callback?: () => void);
+        onError(callback: (res: {errMsg: string, errCode: number}) => void);
+        offError(callback?: () => void);
+        onClose(callback: () => void);
+        offClose(callback?: () => void);
+    }
+    export function createInterstitialAd(params: {adUnitId: string}): InterstitialAd;
+
+    export class GridAd {
+        style: {top: number, left: number, width: number, height: number, realWidth: number, realHeight: number};
+        show(): Promise;
+        hide();
+        onResize(callback?: () => void);
+        onError(callback: (res: {errMsg: string, errCode: number}) => void);
+        offError(callback?: () => void);
+        destroy();
+    }
+    export function createGridAd(params: { adUnitId: string, adTheme: "white", gridCount: number, style: { left: number, top: number, width: number, opacity: number } });
+
 }
 
 
