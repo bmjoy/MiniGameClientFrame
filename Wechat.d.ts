@@ -315,7 +315,7 @@ declare namespace wx {
     // --广告
     export class BannerAd {
         style: {top: number, left: number, width: number, height: number, realWidth: number, realHeight: number};
-        show(): Promise;
+        show();
         hide();
         destroy();
         onResize(callback: () => void);
@@ -328,8 +328,8 @@ declare namespace wx {
     export function createBannerAd(params: {adUnitId: string, adIntervals?: boolean, style: {left: number, top: number, width: number, height: number}}): BannerAd;
 
     export class RewardedVideoAd {
-        load(): Promise;
-        show(): Promise;
+        load();
+        show();
         destroy();
         onLoad(callback: () => void);
         offLoad(callback?: () => void);
@@ -341,8 +341,8 @@ declare namespace wx {
     export function createRewardedVideoAd(params: {adUnitId: string, multiton?: boolean}): RewardedVideoAd;
 
     export class InterstitialAd {
-        load(): Promise;
-        show(): Promise;
+        load();
+        show();
         destroy();
         onLoad(callback: () => void);
         offLoad(callback?: () => void);
@@ -355,7 +355,7 @@ declare namespace wx {
 
     export class GridAd {
         style: {top: number, left: number, width: number, height: number, realWidth: number, realHeight: number};
-        show(): Promise;
+        show();
         hide();
         onResize(callback?: () => void);
         onError(callback: (res: {errMsg: string, errCode: number}) => void);

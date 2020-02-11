@@ -183,9 +183,10 @@ export class WechatAd extends FrameworkObject {
 
     static showGridAd(params: {
             adUnitId: string,
-            adTheme: "white",
+            adTheme: "white" | "black",
             gridCount: number,
             style: { left: number, top: number, width: number, opacity: number },
+            resize?: (gridAd: wx.GridAd) => void,
             errorCallback?: (res: {errMsg: string, errCode: number}) => void }) {
         if (cc.isValid(this.grids[params.adUnitId])) {
             this.grids[params.adUnitId].show();
@@ -200,7 +201,7 @@ export class WechatAd extends FrameworkObject {
             typeof params.errorCallback == "function" && params.errorCallback(res);
         });
         this.grids[params.adUnitId].onResize(() => {
-            this.LOGE(this.TAG, "resize: " + JSON.stringify(this.grids[params.adUnitId].style));
+            typeof params.resize == "function" && params.resize(this.grids[params.adUnitId]);
         });
         this.grids[params.adUnitId].show();
     }

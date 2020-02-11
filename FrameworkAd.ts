@@ -71,6 +71,7 @@ export class FrameworkAd extends FrameworkObject {
         adTheme: "white" | "black",
         gridCount: number,
         style: { left: number, top: number, width: number, opacity: number },
+        resize?: (gridAd: { style: { top: number, left: number, width: number, height: number, realWidth: number, realHeight: number } }) => void,
         errorCallback?: (res: {errMsg: string, errCode: number}) => void }) {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
             WechatAd.showGridAd(params);
