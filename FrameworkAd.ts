@@ -68,7 +68,7 @@ export class FrameworkAd extends FrameworkObject {
    
     static showGridAd(params: {
         adUnitId: string,
-        adTheme: "white",
+        adTheme: "white" | "black",
         gridCount: number,
         style: { left: number, top: number, width: number, opacity: number },
         errorCallback?: (res: {errMsg: string, errCode: number}) => void }) {

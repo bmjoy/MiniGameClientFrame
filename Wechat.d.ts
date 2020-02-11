@@ -362,7 +362,7 @@ declare namespace wx {
         offError(callback?: () => void);
         destroy();
     }
-    export function createGridAd(params: { adUnitId: string, adTheme: "white", gridCount: number, style: { left: number, top: number, width: number, opacity: number } });
+    export function createGridAd(params: { adUnitId: string, adTheme: "white" | "black", gridCount: number, style: { left: number, top: number, width: number, opacity: number } });
 
 }
 
