@@ -53,7 +53,6 @@ export class FrameworkAd extends FrameworkObject {
             errorCallBack?: (res: {errMsg: string, errCode: number})=> void }) {
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
             WechatAd.showRewardedVideoAd(params);
-            this.LOGE(this.TAG, "show rewarded video Ad");
         }
     }
 

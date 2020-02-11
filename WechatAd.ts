@@ -16,7 +16,14 @@ export class WechatAd extends FrameworkObject {
             type: "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right"
         }} = {};
     protected static videoAd: wx.RewardedVideoAd = null;
+    protected static videoAdUnitId: string = "";
+    protected static videoErrorCallback: (res: { errMsg: string, errCode: number }) => void = null;
+    protected static videoFinishedCallback: () => void = null;
+    protected static videoUnfinishedCallback: () => void = null;
     protected static interstitialAd: wx.InterstitialAd = null;
+    protected static interstitialUnitId: string = "";
+    protected static interstitialCloseCallback: () => void = null;
+    protected static interstitialErrorCallback: (res: { errMsg: string, errCode: number }) => void = null;
     protected static grids: { [key: string]: wx.GridAd} = {};
     
     static showBanner(params: {
@@ -112,75 +119,69 @@ export class WechatAd extends FrameworkObject {
             adUnitId: string,
             finished: () => void,
             unfinish: () => void,
-            errorCallBack?: (res: {errMsg: string, errCode: number})=> void }) {
-        if (!cc.isValid(this.videoAd)) {
-            this.createRewardedVideoAd({
-                adUnitId: params.adUnitId,
-                errorCallback: params.errorCallBack
-            });
+            errorCallBack?: (res: { errMsg: string, errCode: number })=> void }) {
+        this.videoErrorCallback = params.errorCallBack;
+        this.videoFinishedCallback = params.finished;
+        this.videoUnfinishedCallback = params.unfinish;
+        if (!cc.isValid(this.videoAd) || this.videoAdUnitId != params.adUnitId) {
+            cc.isValid(this.videoAd) && this.videoAd.destroy();
+            this.createRewardedVideoAd({ adUnitId: params.adUnitId, multiton: true });
+        } else {
+            this.videoAd.show();
         }
-        if (!cc.isValid(this.videoAd)) return;
-        this.videoAd.onClose((isEnd: boolean) => {
-            this.videoAd.destroy();
-            if (isEnd) {
-                typeof params.finished === "function" && params.finished();
-            } else {
-                typeof params.unfinish === "function" && params.unfinish();
-            }
-        });
     }
 
-    protected static createRewardedVideoAd(params: {
-            adUnitId: string, 
-            multiton?: boolean,
-            errorCallback?: (res: {errMsg: string, errCode: number}) => void }) {
-        if (cc.isValid(this.videoAd)) {
-            this.videoAd.destroy();
-        }
-        this.videoAd = wx.createRewardedVideoAd(params);
+    protected static createRewardedVideoAd(params: { 
+            adUnitId: string,
+            multiton?: boolean }) {
+        this.videoAd = wx.createRewardedVideoAd({ adUnitId: params.adUnitId, multiton: params.multiton });
         this.videoAd.onError((res: {errMsg: string, errCode: number}) => {
             this.LOGE(this.TAG, "show video ad error : " + JSON.stringify(res));
-            typeof params.errorCallback == "function" && params.errorCallback(res);
+            this.videoAd.destroy();
+            this.videoAd = null;
+            typeof this.videoErrorCallback == "function" && this.videoErrorCallback(res);
         });
-        this.videoAd.onLoad(() => {
+        this.videoAd.onClose((res: { isEnded: boolean }) => {
+            if (res.isEnded) {
+                typeof this.videoFinishedCallback === "function" && this.videoFinishedCallback();
+            } else {
+                typeof this.videoUnfinishedCallback === "function" && this.videoUnfinishedCallback();
+            }
+        });
+        let onLoadCallback = () => {
+            this.videoAd.offLoad(onLoadCallback);
             this.videoAd.show();
-        });
+        };
+        this.videoAd.onLoad(onLoadCallback);
         this.videoAd.load();
     }
-
 
     static showInterstitialAd(params: {
             adUnitId: string,
             close?: () => void
             errorCallBack?: (res: {errMsg: string, errCode: number})=> void }) {
-        if (!cc.isValid(this.interstitialAd)) {
-            this.createInterstitialAd({
-                adUnitId: params.adUnitId,
-                errorCallback: params.errorCallBack
-            });
+        this.interstitialCloseCallback = params.close;
+        this.interstitialErrorCallback = params.errorCallBack;
+        if (!cc.isValid(this.interstitialAd) || this.interstitialUnitId != params.adUnitId) {
+            cc.isValid(this.interstitialAd) && this.interstitialAd.destroy();
+            this.createInterstitialAd({ adUnitId: params.adUnitId });
+        } else {
+            this.interstitialAd.show();
         }
-        if (!cc.isValid(this.interstitialAd)) return;
-        this.interstitialAd.onClose(() => {
-            this.interstitialAd.destroy();
-            typeof params.close == "function" && params.close();
-        });
     }
 
-    protected static createInterstitialAd(params: { 
-            adUnitId: string,
-            errorCallback?: (res: {errMsg: string, errCode: number}) => void }) {
-        if (cc.isValid(this.interstitialAd)) {
-            this.interstitialAd.destroy();
-        }
+    protected static createInterstitialAd(params: { adUnitId: string }) {
         this.interstitialAd = wx.createInterstitialAd({adUnitId: params.adUnitId});
         this.interstitialAd.onError((res: {errMsg: string, errCode: number}) => {
             this.interstitialAd.destroy();
             this.LOGE(this.TAG, "show interstitial ad error : " + JSON.stringify(res));
-            typeof params.errorCallback == "function" && params.errorCallback(res)
+            typeof this.interstitialErrorCallback == "function" && this.interstitialErrorCallback(res)
         });
-        this.interstitialAd.onLoad(() => {
+        let onLoadCallback = () => {
+            this.interstitialAd.offLoad(onLoadCallback);
             this.interstitialAd.show();
-        });
+        }
+        this.interstitialAd.onLoad(onLoadCallback);
         this.interstitialAd.load();
     }
 

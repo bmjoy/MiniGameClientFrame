@@ -333,9 +333,9 @@ declare namespace wx {
         destroy();
         onLoad(callback: () => void);
         offLoad(callback?: () => void);
-        onError(callback: (res: {errMsg: string, errCode: number}) => void);
+        onError(callback: (res: { errMsg: string, errCode: number }) => void);
         offError(callback?: () => void);
-        onClose(callback: (isEnded: boolean) => void);
+        onClose(callback: (res: { isEnded: boolean }) => void);
         offClose(callback?: () => void);
     }
     export function createRewardedVideoAd(params: {adUnitId: string, multiton?: boolean}): RewardedVideoAd;
@@ -346,7 +346,7 @@ declare namespace wx {
         destroy();
         onLoad(callback: () => void);
         offLoad(callback?: () => void);
-        onError(callback: (res: {errMsg: string, errCode: number}) => void);
+        onError(callback: (res: { errMsg: string, errCode: number }) => void);
         offError(callback?: () => void);
         onClose(callback: () => void);
         offClose(callback?: () => void);
@@ -354,11 +354,11 @@ declare namespace wx {
     export function createInterstitialAd(params: {adUnitId: string}): InterstitialAd;
 
     export class GridAd {
-        style: {top: number, left: number, width: number, height: number, realWidth: number, realHeight: number};
+        style: { top: number, left: number, width: number, height: number, realWidth: number, realHeight: number };
         show();
         hide();
         onResize(callback?: () => void);
-        onError(callback: (res: {errMsg: string, errCode: number}) => void);
+        onError(callback: (res: { errMsg: string, errCode: number }) => void);
         offError(callback?: () => void);
         destroy();
     }
