@@ -43,6 +43,8 @@ export class WechatAd extends FrameworkObject {
         this.banners[params.adUnitId].bannerAd.offError();
         this.banners[params.adUnitId].bannerAd.onError((res: {errMsg: string, errCode: number}) => {
             this.LOGE(this.TAG, "show banner ad error : " + JSON.stringify(res));
+            this.banners[params.adUnitId].bannerAd.destroy();
+            delete this.banners[params.adUnitId];
             typeof params.errorCallBack == "function" && params.errorCallBack(res);
         });
         let screenWidth = SystemUtil.getInstance().screenWidth;
@@ -172,6 +174,7 @@ export class WechatAd extends FrameworkObject {
         }
         this.interstitialAd = wx.createInterstitialAd({adUnitId: params.adUnitId});
         this.interstitialAd.onError((res: {errMsg: string, errCode: number}) => {
+            this.interstitialAd.destroy();
             this.LOGE(this.TAG, "show interstitial ad error : " + JSON.stringify(res));
             typeof params.errorCallback == "function" && params.errorCallback(res)
         });
@@ -198,6 +201,8 @@ export class WechatAd extends FrameworkObject {
         }
         this.grids[params.adUnitId].onError((res: { errMsg: string, errCode: number }) => {
             this.LOGE(this.TAG, "show grid ad error : " + JSON.stringify(res));
+            this.grids[params.adUnitId].destroy();
+            delete this.grids[params.adUnitId];
             typeof params.errorCallback == "function" && params.errorCallback(res);
         });
         this.grids[params.adUnitId].onResize(() => {
