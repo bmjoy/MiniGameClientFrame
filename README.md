@@ -21,7 +21,7 @@
 * 图集资源管理器
 * 音频管理器
 * 消息通知中心
-* http网络请求封装
+* `http`网络请求封装
 * 微信小游戏部分`API`
 * 游戏常用函数封装
 
@@ -301,8 +301,103 @@
 
 #### 分享
 
-封装相关接口在`WechatShare`，按照微信官方文档说明调用即可。
+封装相关接口在`WechatShare`，按照微信官方文档说明调用即可。**建议游戏自行再次封装区分平台**
 
+* 示例
+    ```ts
+    export class ShareManager extends FrameworkObject {
+        
+        protected static TAG: string = "ShareManager";
+        
+        static showTransmitMenu() {
+            if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+                WechatShare.updateShareMenu();
+                WechatShare.showShareMenu({
+                    success: () => { },
+                    fail: () => {}
+                });
+                WechatShare.onShareAppMessage(() => {
+                    return  { title: "", imageUrl: "" }
+                });
+            }
+        }
+
+        static shareAppMessage() {
+            if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+                WechatShare.shareAppMessage({ title: "", imageUrl: "" });
+            }
+        }
+    }
+    ```
+
+#### banner广告
+
+一个`adUnitId`对应唯一`banner`实例，如果两次展示同一`adUnitId`对应的`banner`但是位置发生变化，则回销毁之前的`banner`实例，重新初始化。
+
+* 展示
+    ```ts
+    static showBanner(params: {
+        adUnitId: string,
+        type: "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right",
+        adIntervals?: boolean,
+        errorCallBack?: (res: {errMsg: string, errCode: number}) => void
+    });
+    ```
+* 隐藏
+    ```ts
+    // 隐藏指定banner
+    static hideBanner(adUnitId: string);
+    // 隐藏所有banner
+    static hideAllBanners();
+    ```
+* 销毁
+    ```ts
+    // 销毁指定banner
+    static destroyBanner(adUnitId: string);
+    // 销毁所有banner
+    static destroyAllBanner();
+    ```
+
+#### 视频广告
+
+* 展示
+    ```ts
+    static showRewardedVideoAd(params: {
+        adUnitId: string,
+        finished: () => void,
+        unfinish: () => void,
+        errorCallBack?: (res: {errMsg: string, errCode: number})=> void
+    });
+    ```
+
+#### 插屏广告
+
+* 展示
+    ```ts
+    static showInterstitialAd(params: {
+        adUnitId: string,
+        close?: () => void
+        errorCallBack?: (res: {errMsg: string, errCode: number})=> void 
+    });
+    ```
+
+#### 格子广告
+
+* 展示
+    ```ts
+    static showGridAd(params: {
+        adUnitId: string,
+        adTheme: "white" | "black",
+        gridCount: number,
+        style: { left: number, top: number, width: number, opacity: number },
+        resize?: (gridAd: { style: { top: number, left: number, width: number, height: number, realWidth: number, realHeight: number } }) => void,
+        errorCallback?: (res: {errMsg: string, errCode: number}) => void 
+    })
+    ```
+* 隐藏
+    ```ts
+    static hideGridAd(adUnitId: string);
+    ```
 ## 欢迎讨论
 
 EMail: huxiaoheigame@gmail.com
