@@ -182,6 +182,11 @@ export class WechatAd extends FrameworkObject {
             this.interstitialAd.show();
         }
         this.interstitialAd.onLoad(onLoadCallback);
+        this.interstitialAd.onClose(() => {
+            typeof this.interstitialCloseCallback == "function" && this.interstitialCloseCallback();
+            this.interstitialAd.destroy();
+            this.interstitialAd = null;
+        });
         this.interstitialAd.load();
     }
 
