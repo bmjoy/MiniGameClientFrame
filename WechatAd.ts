@@ -1,5 +1,5 @@
 /*================================================================
-* Description 微信广告
+* Description 微信广告(建议使用FrameworkAd中接口)
 * Email huxiaoheigame@gmail.com
 * Created on Mon Feb 10 2020
 * Copyright (c) 2020 刘虎
