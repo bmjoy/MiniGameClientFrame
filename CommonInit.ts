@@ -8,7 +8,6 @@
 import { CommonEvent } from "./CommonEvent";
 import { NotificationCenter } from "./NotificationCenter";
 import { Utils } from "./Utils";
-import { FrameworkSystem } from "./FrameworkSystem";
 
 let TAG: string = "CommonInit";
 
