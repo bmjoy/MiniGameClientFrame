@@ -5,11 +5,9 @@
  * Copyright (c) 2018 刘虎
 ================================================================*/
 
-import { SystemUtil } from "./SystemUtil";
-
 export class Utils extends cc.Object {
 
-    private static readonly TAG: string = "Utils";
+    public static readonly TAG: string = "Utils";
     private constructor() {
         super();
         Utils.LOGE(Utils.TAG, "不需要初始化");
@@ -20,21 +18,21 @@ export class Utils extends cc.Object {
      *
      * @protected
      * @static
-     * @param {string} version 3位版本号
+     * @param {string} version 位版本号
      * @returns {number}
      * @memberof Utils
      */
     protected static versionToNumber(version: string): number {
         try {
-            var tmpArr: string[] = version.split(".");
-            var versionNum: number = 0;
-            for (let index = 0; index < 3; index++) {
-                const element = tmpArr[index] || 0;
-                versionNum += Number(element) * Math.pow(1000, 3 - index);
+            let tmpArr: string[] = version.split(".");
+            let versionNum: number = 0;
+            for (let index = 0; index < tmpArr.length; index++) {
+                let element = tmpArr[index] || 0;
+                versionNum += Number(element) * Math.pow(1000, tmpArr.length - index);
             }
             return versionNum;
         } catch (error) {
-            console.error(this.TAG, "version is invalid");
+            this.LOGE(this.TAG, "version is invalid");
             return 0;
         }
     }
@@ -43,8 +41,8 @@ export class Utils extends cc.Object {
      * 版本号比较
      *
      * @static
-     * @param {string} version 3位版本号 
-     * @param {string} baseVersion 3位版本号
+     * @param {string} version 位版本号 
+     * @param {string} baseVersion 位版本号
      * @returns {number}
      * @memberof Utils
      */
@@ -112,7 +110,7 @@ export class Utils extends cc.Object {
             }
             return defaultValue;
         } catch (e) {
-            Utils.LOGE(this.TAG, "getLocalStorage error = " + JSON.stringify(e));
+            this.LOGE(this.TAG, "getLocalStorage error = " + JSON.stringify(e));
             return defaultValue;
         }
     }
@@ -132,11 +130,11 @@ export class Utils extends cc.Object {
             } else if (value instanceof Array || value instanceof Object) {
                 value = JSON.stringify(value);
             } else {
-                Utils.LOGE(this.TAG, "set storage error key is " + key);
+                this.LOGE(this.TAG, "set storage error key is " + key);
             }
             cc.sys.localStorage.setItem(key, value);
         } catch (e) {
-            Utils.LOGE(this.TAG, "setLocalStorage error = " + e);
+            this.LOGE(this.TAG, "setLocalStorage error = " + e);
         }
     }
 
@@ -154,7 +152,7 @@ export class Utils extends cc.Object {
         if (!url || url.length == 0) {
             fail && fail(Error("url is error"));
         }
-        cc.loader.load({url: url, type: "png"}, (err: Error, tex: cc.Texture2D) => {
+        cc.loader.load({ url: url, type: "png" }, (err: Error, tex: cc.Texture2D) => {
             if (!err) {
                 if (cc.isValid(sprite)) {
                     sprite.spriteFrame = new cc.SpriteFrame(tex);
@@ -231,94 +229,4 @@ export class Utils extends cc.Object {
         return newObj;
     }
 
-    //----微信
-    /**
-     * 权限检测(微信)
-     *
-     * @static
-     * @param {("userInfo" | "userLocation" | "werun" | "writePhotosAlbum")} type
-     * @param {(authorize: boolean)=>void} [cb]
-     * @memberof Utils
-     */
-    public static isAuthorWechat(type: "userInfo" | "userLocation" | "werun" | "writePhotosAlbum", cb?: (authorize: boolean)=>void) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            wx.getSetting({
-                success: (res: any) => {
-                    cb && type === "userInfo" && cb(res.authSetting["scope.userInfo"]);
-                    cb && type === "userLocation" && cb(res.authSetting["scope.userLocation"]);
-                    cb && type === "werun" && cb(res.authSetting["scope.werun"]);
-                    cb && type === "writePhotosAlbum" && cb(res.authSetting["scope.writePhotosAlbum"]);
-                },
-                fail: (res: any) => {
-                    this.LOGE(this.TAG, JSON.stringify(res));
-                }
-            });
-        } else {
-            this.LOGW(this.TAG, "不是微信平台");
-        }
-    }
-
-    /**
-     * 获取用户信息(微信)
-     *
-     * @static
-     * @param {wx.GetUserInfoParams} params
-     * @memberof Utils
-     */
-    public static getUserInfoWechat(params: wx.GetUserInfoParams) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            wx.getUserInfo(params);
-        }
-    }
-
-    /**
-     * 创建微信授权按钮(微信)
-     *
-     * @static
-     * @param {wx.CreateClubButtonParams} params
-     * @returns {wx.GameClubButton}
-     * @memberof Utils
-     */
-    public static createGameClubButton(params: wx.CreateClubButtonParams): wx.GameClubButton {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            return wx.createGameClubButton(params);
-        }
-    }
-    
-    /**
-     * 世界坐标转换成微信坐标(微信)
-     *
-     * @static
-     * @param {cc.Vec2} pos
-     * @returns {cc.Vec2}
-     * @memberof Utils
-     */
-    public static worldPosToWechatPos(pos: cc.Vec2): cc.Vec2 {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            let wxScreenWidth = SystemUtil.getInstance().screenWidth;
-            let wxScreenHeight = SystemUtil.getInstance().screenHeight;
-            let screenWidth = cc.winSize.width;
-            let screenHeight = cc.winSize.height;
-            let rateW = wxScreenWidth / screenWidth;
-            let rateH = wxScreenHeight / screenHeight;
-            return new cc.Vec2(pos.x * rateW, (screenHeight - pos.y) * rateH);
-        }
-        
-    }
-
-    /**
-     * 游戏像素转换成微信像素(微信)
-     *
-     * @static
-     * @param {number} px
-     * @param {("width" | "height")} type
-     * @returns {number}
-     * @memberof Utils
-     */
-    public static gamePxToWechatPx(px: number, type: "width" | "height"): number {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            if (type == "width") return px / cc.winSize.width * SystemUtil.getInstance().screenWidth;
-            if (type == "height") return px / cc.winSize.height * SystemUtil.getInstance().screenHeight;
-        }
-    }
 }

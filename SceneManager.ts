@@ -26,7 +26,7 @@ export interface ChangeSceneResult {
 
 export class SceneManager extends cc.Object {
 
-    protected readonly TAG: string = "SceneManager";
+    public readonly TAG: string = "SceneManager";
     protected static instance: SceneManager = new SceneManager();
     protected sceneParmas: SceneParams[] = null;
     protected hasInit: boolean = false;

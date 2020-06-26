@@ -14,7 +14,7 @@ interface NotificationHandler {
 
 export class NotificationCenter extends cc.Object {
 
-    private readonly TAG: string = "NotificationCenter";
+    public readonly TAG: string = "NotificationCenter";
     private static readonly instance: NotificationCenter = new NotificationCenter();
     private _events: { [key: string]: Array<NotificationHandler> } = {};
     private constructor() {

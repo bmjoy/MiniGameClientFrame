@@ -23,7 +23,7 @@ export interface HttpBaseParams {
 
 export class NetworkHttp extends FrameworkObject {
 
-    private static readonly TAG: string = "NetworkHttp";
+    public static readonly TAG: string = "NetworkHttp";
     private constructor() {
         super();
         Utils.LOGE(NetworkHttp.TAG, "不需要初始化");
@@ -46,24 +46,21 @@ export class NetworkHttp extends FrameworkObject {
                 method: params.method || "GET",
                 dataType: params.dataType,
                 responseType: params.responseType || "text",
-                success: (res: any) => {
-                    Utils.LOGD(this.TAG, "success");
+                success: (res: { data: "json" | "arraybuffer" }) => {
                     if (params.success) {
                         if (params.dataType == "json") {
-                            params.success(JSON.parse(res));
+                            params.success(res.data);
                         } else {
-                            params.success(res);
+                            params.success(res.data);
                         }
                     }
                 },
                 fail: (res: any) => {
-                    Utils.LOGD(this.TAG, "failure");
                     if (params.fail) {
                         params.fail(res);
                     }
                 },
                 complete: (res) => {
-                    Utils.LOGD(this.TAG, "complete");
                     if (params.complete) {
                         params.complete(res);
                     }

@@ -6,22 +6,19 @@
 ================================================================*/
 
 import { FrameworkObject } from "./FrameworkObject"
-
-interface MoudleStruct {
-    TAG: string;
-    moduleCtr: FrameworkObject
-}
+import { Utils } from "./Utils";
+import { ModuleBase } from "./ModuleBase";
 
 export class ModuleManager extends FrameworkObject {
 
-    protected readonly TAG: string = "ModuleManager";
+    public readonly TAG: string = "ModuleManager";
     protected static instance: ModuleManager = null;
-    protected modules: Map<string, MoudleStruct> = new Map();
+    protected modules: Map<string, ModuleBase> = new Map();
 
     protected constructor() {
         super()
     }
-    
+
     /**
      * 获取实例
      *
@@ -45,17 +42,14 @@ export class ModuleManager extends FrameworkObject {
      * @returns {FrameworkObject}
      * @memberof ModuleManager
      */
-    public registerModule(moduleName: string, ModuleCtr: new () => FrameworkObject, initParams?: any): FrameworkObject {
+    public registerModule(moduleName: string, ModuleCtr: new () => ModuleBase, initParams?: any): FrameworkObject {
         if (this.modules.has(moduleName)) {
-            this.LOGE(this.TAG, "重复模块:" + moduleName);
+            Utils.LOGE(this.TAG, "重复模块:" + moduleName);
             return null;
         }
-        let moduleCtr = new ModuleCtr();
-        "function" === typeof moduleCtr["init"] && moduleCtr["init"](initParams);
-        this.modules.set(moduleName, {
-            TAG: moduleName,
-            moduleCtr: moduleCtr
-        });
+        let moduleCtr: ModuleBase = new ModuleCtr();
+        moduleCtr.init(initParams);
+        this.modules.set(moduleName, moduleCtr);
         return moduleCtr;
     }
 
@@ -66,7 +60,7 @@ export class ModuleManager extends FrameworkObject {
      * @returns {MoudleStruct}
      * @memberof ModuleManager
      */
-    public getModule(moduleName: string): MoudleStruct {
+    public getModule(moduleName: string): ModuleBase {
         return this.modules.get(moduleName);
     }
 
@@ -79,16 +73,12 @@ export class ModuleManager extends FrameworkObject {
      */
     public removeModule(moduleName: string) {
         if (!this.modules.has(moduleName)) {
-            this.LOGE(this.TAG, "移除模块未注册:" + moduleName);
+            Utils.LOGE(this.TAG, "移除模块未注册:" + moduleName);
             return;
         }
-        let moudleStruct = this.modules.get(moduleName);
-        if ("function" === typeof moudleStruct.moduleCtr["onDestroy"]) {
-            moudleStruct.moduleCtr["onDestroy"]();
-        }
-        if ("function" === typeof moudleStruct.moduleCtr.destroy) {
-            moudleStruct.moduleCtr.destroy();
-        }
+        let moduleCtr = this.modules.get(moduleName);
+        moduleCtr.willDestroy();
+        moduleCtr.destroy();
         this.modules.delete(moduleName);
     }
 

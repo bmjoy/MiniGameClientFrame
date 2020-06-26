@@ -23,4 +23,5 @@ export class CommonEvent extends cc.Object {
     public static readonly COMMON_EVENT_TCP_CLOSED: string = "COMMON_EVENT_TCP_CLOSED";
     public static readonly COMMON_EVENT_AUTH_SUCCESS: string = "COMMON_EVENT_AUTH_SUCCESS";
     public static readonly COMMON_EVENT_AUTH_FAILURE: string = "COMMON_EVENT_AUTH_FAILURE";
+    public static readonly COMMON_EVENT_NETWORK_STATUS_CHANGE: string = "COMMON_EVENT_NETWORK_STATUS_CHANGE";
 }

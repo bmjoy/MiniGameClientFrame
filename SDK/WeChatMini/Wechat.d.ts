@@ -7,6 +7,11 @@
 
 declare namespace wx {
 
+    // --常量
+    export const env: {
+        USER_DATA_PATH: string
+    }
+
     // --基本数据结构
     interface BaseCallback {
         success?: (res?: any) => void;
@@ -52,7 +57,7 @@ declare namespace wx {
             fileType: "jpg" | "png",
             quality?: number,
             success?: (res: { tempFilePath: string }) => void,
-            fail?: () => void,
+            fail?: (err) => void,
             complete?: () => void
         }): void;
         getContext(contextType: "2d" | "webgl", contextAttributes?: { antialias?: boolean, preserveDrawingBuffer?: boolean, antialiasSamples?: number }): RenderingContext;
@@ -107,8 +112,12 @@ declare namespace wx {
         bluetoothEnabled?: boolean; // 蓝牙的系统开关 > 2.6.0
         locationEnabled?: boolean; // 地理位置的系统开关 > 2.6.0
         wifiEnabled?: boolean; // Wi-Fi 的系统开关
+        safeArea?: { left: number, right: number, top: number, bottom: number, width: number, height: number };
     }
     export function getSystemInfoSync(): SystemInfo;
+
+    // 获取菜单按钮（右上角胶囊按钮）的布局位置信息。坐标信息以屏幕左上角为原点。
+    export function getMenuButtonBoundingClientRect(): { width: number, height: number, top: number, right: number, bottom: number, left: number };
 
     // --音效相关
     export class InnerAudioContext {
@@ -149,7 +158,12 @@ declare namespace wx {
     }
     export function createInnerAudioContext(): InnerAudioContext;
 
-    // --Http网络
+    // 网络
+    export function onNetworkStatusChange(callback: (res: { isConnected: boolean, networkType: "wifi" | "2g" | "3g" | "4g" | "5g" | "unknown" | "none" }) => void): void;
+    export function offNetworkStatusChange(callback: () => void): void;
+    export function getNetworkType(params: { success: (res: { networkType: "wifi" | "2g" | "3g" | "4g" | "5g" | "unknown" | "none" }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+
+    // --Http
     interface HttpRequestParams {
         url: string;
         data?: string | { [key: string]: any };
@@ -157,7 +171,7 @@ declare namespace wx {
         method?: "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "TRACE" | "CONNECT";
         dataType?: "json" | "arraybuffer";
         timeout?: number;
-        responseType?: string;
+        responseType?: "text" | "arraybuffer";
         success?: (res: { data: any, statusCode: number, header?: { [key: string]: string } }) => void;
         fail?: (res?: any) => void;
         complete?: (res?: any) => void;
@@ -166,6 +180,58 @@ declare namespace wx {
         abort(): void;
     }
     export function request(param: HttpRequestParams): RequestTask;
+
+    // --Socket
+    export class SocketTask {
+        send(params: {
+            data: string | ArrayBuffer,
+            success?: () => void,
+            fail?: () => void,
+            complete?: () => void
+        });
+        close(params: {
+            code?: number,
+            reason?: string,
+            success?: (res?: any) => void,
+            fail?: (res?: any) => void,
+            complete?: (res?: any) => void
+        });
+        onOpen(callback: (res: { header: Object, profile: Object }) => void);
+        onClose(callback: (res: { code: number, reason: string }) => void);
+        onError(callback: (res: { errMsg: string }) => void);
+        onMessage(callback: (res: { data: string | ArrayBuffer }) => void);
+    }
+    export function connectSocket(params: {
+        url: string,
+        header?: Object,
+        protocols?: string[],
+        tcpNoDelay: false,
+        perMessageDeflate: false,
+        timeout?: number,
+        success?: () => void,
+        fail?: () => void,
+        complete?: () => void
+    }): SocketTask;
+    export function sendSocketMessage(params: {
+        data: string | ArrayBuffer,
+        success?: () => void,
+        fail?: () => void,
+        complete?: () => void
+    });
+    export function onSocketOpen(callback: (res: { header: Object, profile: Object }) => void);
+    export function onSocketClose(callback: (res: { code: number, reason: string }) => void);
+    export function onSocketError(callback: (res: { errMsg: string }) => void);
+    export function onSocketMessage(callback: (res: { data: string | ArrayBuffer }) => void);
+
+    // --下载
+    export class DownloadTask {
+        abort();
+        onProgressUpdate(callback: (res: { progress: number, totalBytesWritten: number, totalBytesExpectedToWrite: number }) => void);
+        offProgressUpdate(callback: (res: { progress: number, totalBytesWritten: number, totalBytesExpectedToWrite: number }) => void);
+        onHeadersReceived(callback: (res: { header: Object }) => void);
+        offHeadersReceived(callback: (res: { header: Object }) => void);
+    }
+    export function downloadFile(params: { url: string, header?: Object, timeout?: number, filePath?: string, success: (res: { tempFilePath: string, filePath: string, statusCode: number }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
 
     // --用户信息
     export interface UserInfo {
@@ -235,9 +301,10 @@ declare namespace wx {
     interface UpdateShareMenuParams extends ShowShareMenuParams {
         isUpdatableMessage?: boolean,
         activityId?: string,
-        templateInfo?: { name: string, value: string }[]
+        templateInfo?: { parameterList: { name: string, value: string }[] },
+        toDoActivityId?: string, //   新增群待办消息的id
     }
-    interface ShareAppMessageParams {
+    interface ShareAppMessageParams extends BaseCallback {
         title?: string,
         imageUrl?: string,
         query?: string,
@@ -250,8 +317,8 @@ declare namespace wx {
     export function updateShareMenu(params?: UpdateShareMenuParams);
     export function showShareMenu(params?: ShowShareMenuParams);
     export function shareAppMessage(params?: ShareAppMessageParams);
-    export function onShareAppMessage(cb: () => ShareAppMessageParams);
-    export function offShareAppMessage(cb: () => ShareAppMessageParams);
+    export function onShareAppMessage(cb: (params: ShareAppMessageParams) => void);
+    export function offShareAppMessage(cb: (params: ShareAppMessageParams) => void);
     export function hideShareMenu(params?: BaseCallback);
     export function getShareInfo(params: GetShareInfoParams);
 
@@ -312,9 +379,28 @@ declare namespace wx {
     }
     export function createGameClubButton(params: CreateClubButtonParams): GameClubButton;
 
+    // --导流
+    export function navigateToMiniProgram(params: {
+        appId: string,
+        path: string,
+        extraData?: { [from: string]: string },
+        envVersion: 'develop' | 'trial' | 'release',
+        success: () => void,
+        fail: () => void,
+        complete?: () => void
+    }): void;
+
+    export function previewImage(params: {
+        current: string,
+        urls: string[],
+        success: (res: any) => void,
+        fail: (res: any) => void,
+        complete?: (res: any) => void
+    }): void;
+
     // --广告
     export class BannerAd {
-        style: {top: number, left: number, width: number, height: number, realWidth: number, realHeight: number};
+        style: { top: number, left: number, width: number, height: number, realWidth: number, realHeight: number };
         show();
         hide();
         destroy();
@@ -322,10 +408,10 @@ declare namespace wx {
         offResize(callback?: () => void);
         onLoad(callback: () => void);
         offLoad(callback?: () => void);
-        onError(callback: (res: {errMsg: string, errCode: number}) => void);
+        onError(callback: (res: { errMsg: string, errCode: number }) => void);
         offError(callback?: () => void);
     }
-    export function createBannerAd(params: {adUnitId: string, adIntervals?: boolean, style: {left: number, top: number, width: number, height: number}}): BannerAd;
+    export function createBannerAd(params: { adUnitId: string, adIntervals?: boolean, style: { left: number, top: number, width: number, height: number } }): BannerAd;
 
     export class RewardedVideoAd {
         load();
@@ -338,7 +424,7 @@ declare namespace wx {
         onClose(callback: (res: { isEnded: boolean }) => void);
         offClose(callback?: () => void);
     }
-    export function createRewardedVideoAd(params: {adUnitId: string, multiton?: boolean}): RewardedVideoAd;
+    export function createRewardedVideoAd(params: { adUnitId: string, multiton?: boolean }): RewardedVideoAd;
 
     export class InterstitialAd {
         load();
@@ -351,7 +437,7 @@ declare namespace wx {
         onClose(callback: () => void);
         offClose(callback?: () => void);
     }
-    export function createInterstitialAd(params: {adUnitId: string}): InterstitialAd;
+    export function createInterstitialAd(params: { adUnitId: string }): InterstitialAd;
 
     export class GridAd {
         style: { top: number, left: number, width: number, height: number, realWidth: number, realHeight: number };
@@ -363,6 +449,85 @@ declare namespace wx {
         destroy();
     }
     export function createGridAd(params: { adUnitId: string, adTheme: "white" | "black", gridCount: number, style: { left: number, top: number, width: number, opacity: number } });
+
+    // --文件
+    export class Stats {
+        mode: string;
+        size: number;
+        lastAccessedTime: number;
+        lastModifiedTime: number;
+        isFile(): boolean;
+        isDirectory(): boolean;
+    }
+
+    export class FileSystemManager {
+        access(params: { path: string, success: (res: { errMsg: string }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        accessSync(path: string): { errMsg: string };
+        appendFile(params: { filePath: string, data: string | ArrayBuffer, encoding: "utf8", success: () => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        appendFileSync(filePath: string, data: string | ArrayBuffer, encoding: string): { errMsg: string };
+        copyFile(params: { srcPath: string, destPath: string, success?: () => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        copyFileSync(srcPath: string, destPath: string): { errMsg: string };
+        getFileInfo(params: { filePath: string, success?: (res: { size: number }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        getSavedFileList(params: { success: (res: { fileList: { filePath: string, size: number, createTime: number }[] }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        mkdir(params: { dirPath: string, recursive: boolean, success: () => void, fail: (res: { errMsg: string }) => void, complete: (res: { errMsg: string }) => void });
+        mkdirSync(dirPath: string, recursive: boolean): { errMsg: string };
+        readdir(params: { dirPath: string, success: (res: { files: string[] }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        readdirSync(dirPath: string): string[];
+        readFile(params: { filePath: string, encoding: string, position?: string, success: (res: { data: string | ArrayBuffer }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        readFileSync(filePath: string, encoding: string, position?: string, length?: string): string | ArrayBuffer;
+        removeSavedFile(params: { filePath: string, success: () => void, fail: ({ errMsg: string }) => void, complete?: () => void });
+        rename(params: { oldPath: string, newPath: string, success: () => void, fail: ({ errMsg: string }) => void, complete?: () => void });
+        renameSync(oldPath: string, newPath: string);
+        rmdir(params: { dirPath: string, recursive: false, success: () => void, fail: ({ errMsg: string }) => void, complete?: () => void });
+        rmdirSync(dirPath: string, recursive: boolean): { errMsg: string };
+        saveFile(params: { tempFilePath: string, filePath: string, success: (res: { savedFilePath: string }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        saveFileSync(tempFilePath: string, filePath: string): string;
+        stat(params: { path: string, recursive?: boolean, success: (res: { stats: Stats | { [key: string]: Stats } }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        statSync(path: string, recursive: false): Stats;
+        unlink(params: { filePath: string, success: (res: { errMsg: string }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        unlinkSync(filePath: string): { errMsg: string };
+        unzip(params: { zipFilePath: string, targetPath: string, success: (res: { errMsg: string }) => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        writeFile(params: { filePath: string, data: string | ArrayBuffer, encoding: string, success: () => void, fail: (res: { errMsg: string }) => void, complete?: () => void });
+        writeFileSync(filePath: string, data: string | ArrayBuffer, encoding: string): { errMsg: string };
+    }
+    export function getFileSystemManager(): FileSystemManager;
+
+    // --支付
+    export function requestMidasPayment(params: {
+        mode: string,
+        offerId: string,
+        currencyType: string,
+        success?: () => void,
+        fail?: (res: { errCode: number }) => void,
+        complete?: () => void,
+        platform?: string,
+        buyQuantity?: number,
+        zoneId?: string,
+        env?: number
+    });
+
+    // --更新
+    export class UpdateManager {
+        applyUpdate();
+        onCheckForUpdate(callback: (res: { hasUpdate: boolean }) => void);
+        onUpdateFailed(callback: (res: { errMsg: string }) => void);
+        onUpdateReady(callback: () => void);
+    }
+    export function getUpdateManager(): UpdateManager;
+
+    // --交互
+    export function showModal(params: {
+        title?: string,
+        content?: string,
+        showCancel?: boolean,
+        cancelText?: string,
+        cancelColor?: string,
+        confirmText?: string,
+        confirmColor?: string,
+        success?: (res: { confirm: boolean, cancel: boolean }) => void,
+        fail?: (res: { resMsg: string }) => void,
+        complete?: () => void
+    });
 
 }
 

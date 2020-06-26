@@ -5,13 +5,13 @@
  * Copyright (c) 2019 刘虎
 ================================================================*/
 
-import { FrameworkObject } from "./FrameworkObject";
+import { Utils } from "./Utils";
 
-export class FrameworkBehavior extends FrameworkObject {
+export class FrameworkBehavior extends cc.Object {
 
+    public readonly TAG: string = "FrameworkBehavior";
     protected exportFunctionNameList: string[] = [];
     protected object: cc.Object = null;
-    protected readonly TAG: string = "FrameworkBehavior";
 
     /**
      * 自动绑定
@@ -22,7 +22,7 @@ export class FrameworkBehavior extends FrameworkObject {
      */
     public autoBindFunction(object: cc.Object) {
         if (!cc.isValid(object)) {
-            this.LOGE(this.TAG, "object is invalid");
+            Utils.LOGE(this.TAG, "object is invalid");
             return;
         }
         this.object = object;
@@ -47,7 +47,7 @@ export class FrameworkBehavior extends FrameworkObject {
      */
     protected bindFunction(oldFunctionName: string, newFunctionName: string, deprecated: boolean, endCallBack: boolean) {
         if (!this[newFunctionName]) {
-            this.LOGE(this.TAG, "不存在函数:" + newFunctionName);
+            Utils.LOGE(this.TAG, "不存在函数:" + newFunctionName);
             return;
         }
         var oldFunc = this.object[oldFunctionName];

@@ -7,8 +7,8 @@
 
 import { CommonEvent } from "./CommonEvent";
 import { NotificationCenter } from "./NotificationCenter";
-import { SystemUtil } from "./SystemUtil";
 import { Utils } from "./Utils";
+import { FrameworkSystem } from "./FrameworkSystem";
 
 let TAG: string = "CommonInit";
 
@@ -22,12 +22,6 @@ if (cc.sys.platform == cc.sys.WECHAT_GAME) {
         });
     } catch (e) {
         Utils.LOGE(TAG, "listen wechat callback error : " + JSON.stringify(e));
-    }
-    try {
-        var systemInfo: wx.SystemInfo = wx.getSystemInfoSync();
-        SystemUtil.getInstance().init(systemInfo);
-    } catch (e) {
-        Utils.LOGE(TAG, "get system info sysnc failure : " + JSON.stringify(e));
     }
 } else {
     cc.game.on(cc.game.EVENT_SHOW, ()=>{

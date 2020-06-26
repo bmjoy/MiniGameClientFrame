@@ -1,103 +1,106 @@
 /*================================================================
- * Description 微信分享相关接口
+ * Description 微信分享相关接口(建议使用FrameworkShare中接口)
  * Email huxiaoheigame@gmail.com
  * Created on Sun Sep 15 2019 11:59:28
- * Copyright (c) 2019 刘虎
+ * Copyright (c) 2019 途游游戏
 ================================================================*/
 
-import { FrameworkObject } from "./FrameworkObject";
 
-export class WechatShare extends FrameworkObject {
+namespace TYSDK {
 
-    protected static readonly TAG: string = "WechatShare";
+    enum ShareStatus {
+        UNKNOW = 1,
+        SHAREING = 2,
+        SHARED = 3
+    }
 
-    /**
-     * 更新转发菜单
-     *
-     * @static
-     * @param {wx.UpdateShareMenuParams} [params]
-     * @memberof WechatShare
-     */
-    public static updateShareMenu(params?: wx.UpdateShareMenuParams) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+    export class WechatShare extends egret.HashObject implements ShareInterface {
+
+        public readonly TAG: string = "WechatShare";
+        private static instance: WechatShare = null;
+        private shareStatus: ShareStatus = ShareStatus.UNKNOW;
+        private shareTime: number = 0;
+        private shareParams: {
+            title?: string,
+            imageUrl?: string,
+            query?: string,
+            imageUrlId?: string,
+            success?: (res?: any) => void,
+            fail?: (res: any) => void
+        } = null;
+
+        private constructor() {
+            super();
+            wx.onShareAppMessage(() => {
+                return {
+                    title: '三国经典重温，寻找往日激情！',
+                    imageUrl: 'https://szh5.nalrer.cn/szmahjong/WXGames/HappyMJ/sharepic/sp3-49.jpg' // 图片 URL
+                }
+            })
+        }
+
+        public static getInstance() {
+            if (this.instance == null) {
+                this.instance = new WechatShare();
+                this.instance.registerEvents();
+            }
+            return this.instance;
+        }
+
+        private registerEvents() {
+            NotificationCenter.listen(CommonEvent.COMMON_EVENT_GAME_ON_SHOW, this.onShow, this);
+            NotificationCenter.listen(CommonEvent.COMMON_EVENT_GAME_ON_HIDE, this.onHide, this);
+        }
+
+        private onShow() {
+            this.shareStatus = ShareStatus.SHARED;
+            if (!this.shareParams) {
+                this.shareTime = 0;
+                return;
+            }
+            let time = new Date().getTime();
+            let interval = this.shareTime - time;
+            if (interval < 2000) {
+                this.shareParams.success && this.shareParams.success({ time: interval, errMsg: interval });
+            } else {
+                this.shareParams.fail && this.shareParams.fail({ time: interval, errMsg: interval });
+            }
+            this.shareParams = null;
+        }
+
+        private onHide() {
+            if (ShareStatus.SHAREING) {
+                this.shareTime = new Date().getTime();
+            }
+        }
+
+        public updateShareMenu(params?: wx.UpdateShareMenuParams) {
             wx.updateShareMenu(params);
         }
-    }
 
-    /**
-     * 展示转发菜单
-     *
-     * @static
-     * @param {wx.ShowShareMenuParams} [params]
-     * @memberof WechatShare
-     */
-    public static showShareMenu(params?: wx.ShowShareMenuParams) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+        public showShareMenu(params?: wx.ShowShareMenuParams) {
             wx.showShareMenu(params);
         }
-    }
 
-    /**
-     * 分享
-     *
-     * @static
-     * @param {wx.ShareAppMessageParams} [params]
-     * @memberof WechatShare
-     */
-    public static shareAppMessage(params?: wx.ShareAppMessageParams) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            wx.shareAppMessage(params);
-        }
-    }
-
-    /**
-     * 监听分享被拉起
-     *
-     * @static
-     * @param {() => wx.ShareAppMessageParams} cb
-     * @memberof WechatShare
-     */
-    public static onShareAppMessage(cb: () => wx.ShareAppMessageParams) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            wx.onShareAppMessage(cb);
-        }
-    }
-
-    /**
-     * 移除分享被拉起的监听
-     *
-     * @static
-     * @param {() => wx.ShareAppMessageParams} cb
-     * @memberof WechatShare
-     */
-    public static offShareAppMessage(cb: () => wx.ShareAppMessageParams) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-            wx.offShareAppMessage(cb);
-        }
-    }
-
-    /**
-     * 隐藏转发
-     *
-     * @static
-     * @param {wx.BaseCallback} [params]
-     * @memberof WechatShare
-     */
-    public static hideShareMenu(params?: wx.BaseCallback) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+        public hideShareMenu(params?: wx.BaseCallback) {
             wx.hideShareMenu(params);
         }
-    }
 
-    /**
-     * 获取分享信息
-     *
-     * @static
-     * @param {wx.GetShareInfoParams} params
-     * @memberof WechatShare
-     */
-    public static getShareInfo(params: wx.GetShareInfoParams) {
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+        public shareAppMessage(params?: wx.ShareAppMessageParams) {
+            this.shareStatus = ShareStatus.SHAREING;
+            this.shareParams = params;
+            wx.shareAppMessage(params);
+        }
+
+        public onShareAppMessage(cb: (params: wx.ShareAppMessageParams) => void) {
+            wx.onShareAppMessage(cb);
+        }
+
+        public offShareAppMessage(cb: (params: wx.ShareAppMessageParams) => void) {
+            wx.offShareAppMessage(cb);
+        }
+
+        public getShareInfo(params: wx.GetShareInfoParams) {
             wx.getShareInfo(params);
         }
     }

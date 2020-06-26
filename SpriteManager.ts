@@ -9,9 +9,9 @@ import { Utils } from "./Utils";
 
 export class SpriteManager extends cc.Object {
 
-    private readonly TAG: string = "NotificationCenter";
+    public readonly TAG: string = "NotificationCenter";
     private static readonly instance: SpriteManager = new SpriteManager();
-    private spriteFrameContent: {[key: string]: cc.SpriteFrame} = {};
+    private spriteFrameContent: { [key: string]: cc.SpriteFrame } = {};
 
     private constructor() {
         super();
@@ -40,7 +40,7 @@ export class SpriteManager extends cc.Object {
         if (this.spriteFrameContent[url]) {
             callback(node, this.spriteFrameContent[url]);
         } else {
-            cc.loader.loadRes(url, cc.SpriteFrame, (err: Error, spriteFrame: cc.SpriteFrame)=>{
+            cc.loader.loadRes(url, cc.SpriteFrame, (err: Error, spriteFrame: cc.SpriteFrame) => {
                 if (!err) {
                     this.spriteFrameContent[url] = spriteFrame;
                     callback(node, spriteFrame);

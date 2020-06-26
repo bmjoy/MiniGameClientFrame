@@ -5,34 +5,38 @@
 * Copyright (c) 2020 刘虎
 ================================================================*/
 
-import { FrameworkObject } from "./FrameworkObject"
-import { SystemUtil } from "./SystemUtil";
+import { FrameworkObject } from "../../FrameworkObject";
+import { AD } from "../../FrameworkAd";
+import { Utils } from "../../Utils";
 
-export class WechatAd extends FrameworkObject {
+export class WechatAd extends FrameworkObject implements AD {
 
-    protected static readonly TAG: string = "WechatAd";
-    protected static banners: { [key: string]: {
+    public readonly TAG: string = "WechatAd";
+    private instance: WechatAd = null;
+    protected banners: {
+        [key: string]: {
             bannerAd: wx.BannerAd,
             type: "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right"
-        }} = {};
-    protected static videoAd: wx.RewardedVideoAd = null;
-    protected static videoAdUnitId: string = "";
-    protected static videoErrorCallback: (res: { errMsg: string, errCode: number }) => void = null;
-    protected static videoFinishedCallback: () => void = null;
-    protected static videoUnfinishedCallback: () => void = null;
-    protected static interstitialAd: wx.InterstitialAd = null;
-    protected static interstitialUnitId: string = "";
-    protected static interstitialCloseCallback: () => void = null;
-    protected static interstitialErrorCallback: (res: { errMsg: string, errCode: number }) => void = null;
-    protected static grids: { [key: string]: wx.GridAd} = {};
-    
-    static showBanner(params: {
-            adUnitId: string, 
-            type: "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right",
-            adIntervals?: boolean, 
-            errorCallBack?: (res: {errMsg: string, errCode: number}) => void }) {
-                
-        var style: {left: number, top: number, width: number, height: number} = {
+        }
+    } = {};
+    protected videoAd: wx.RewardedVideoAd = null;
+    protected videoAdUnitId: string = "";
+    protected videoErrorCallback: (res: { errMsg: string, errCode: number }) => void = null;
+    protected videoFinishedCallback: () => void = null;
+    protected videoUnfinishedCallback: () => void = null;
+    protected interstitialAd: wx.InterstitialAd = null;
+    protected interstitialUnitId: string = "";
+    protected interstitialCloseCallback: () => void = null;
+    protected interstitialErrorCallback: (res: { errMsg: string, errCode: number }) => void = null;
+    protected grids: { [key: string]: wx.GridAd } = {};
+
+    public showBanner(params: {
+        adUnitId: string,
+        type: "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right",
+        adIntervals?: boolean,
+        errorCallBack?: (res: { errMsg: string, errCode: number }) => void
+    }) {
+        var style: { left: number, top: number, width: number, height: number } = {
             left: 0, top: 0, width: 0, height: 0
         };
         if (cc.isValid(this.banners[params.adUnitId]) && this.banners[params.adUnitId].type != params.type) {
@@ -48,14 +52,15 @@ export class WechatAd extends FrameworkObject {
             return
         }
         this.banners[params.adUnitId].bannerAd.offError();
-        this.banners[params.adUnitId].bannerAd.onError((res: {errMsg: string, errCode: number}) => {
-            this.LOGE(this.TAG, "show banner ad error : " + JSON.stringify(res));
+        this.banners[params.adUnitId].bannerAd.onError((res: { errMsg: string, errCode: number }) => {
+            Utils.LOGE(this.TAG, "show banner ad error : " + JSON.stringify(res));
             this.banners[params.adUnitId].bannerAd.destroy();
             delete this.banners[params.adUnitId];
             typeof params.errorCallBack == "function" && params.errorCallBack(res);
         });
-        let screenWidth = SystemUtil.getInstance().screenWidth;
-        let screenHeight = SystemUtil.getInstance().screenHeight;
+        let systemInfo = wx.getSystemInfoSync()
+        let screenWidth = systemInfo.screenWidth;
+        let screenHeight = systemInfo.screenHeight;
         this.banners[params.adUnitId].bannerAd.onResize(() => {
             let bannerAd = this.banners[params.adUnitId].bannerAd;
             if (params.type.indexOf("top") >= 0) bannerAd.style.top = 0;
@@ -71,19 +76,19 @@ export class WechatAd extends FrameworkObject {
         this.banners[params.adUnitId].bannerAd.show();
     }
 
-    static hideBanner(adUnitId: string) {
+    public hideBanner(adUnitId: string) {
         if (cc.isValid(this.banners[adUnitId])) {
             this.banners[adUnitId].bannerAd.hide();
         }
     }
 
-    static hideAllBanners() {
+    public hideAllBanners() {
         for (let key in this.banners) {
             this.hideBanner(key);
         }
     }
 
-    static destroyBanner(adUnitId: string) {
+    public destroyBanner(adUnitId: string) {
         if (cc.isValid(this.banners[adUnitId])) {
             this.banners[adUnitId].bannerAd.offError();
             this.banners[adUnitId].bannerAd.offResize();
@@ -93,21 +98,23 @@ export class WechatAd extends FrameworkObject {
         }
     }
 
-    static destroyAllBanners() {
+    public destroyAllBanners() {
         for (let key in this.banners) {
             this.destroyBanner(key);
         }
     }
-    
-    protected static createBannerAd(params: {
-            adUnitId: string,
-            style: {left: number, top: number, width: number, height: number}
-            adIntervals?: boolean,
-            errorCallBack?: (res: {errMsg: string, errCode: number}) => {} }) {
+
+    protected createBannerAd(params: {
+        adUnitId: string,
+        style: { left: number, top: number, width: number, height: number }
+        adIntervals?: boolean,
+        errorCallBack?: (res: { errMsg: string, errCode: number }) => {}
+    }) {
         let bannerAd: wx.BannerAd = wx.createBannerAd(params);
-        bannerAd.onError((res: {errMsg: string, errCode: number}) => {
-            this.LOGE(this.TAG, "show banner ad error : " + JSON.stringify(res));
+        bannerAd.onError((res: { errMsg: string, errCode: number }) => {
+            Utils.LOGE(this.TAG, "show banner ad error : " + JSON.stringify(res));
             typeof params.errorCallBack == "function" && params.errorCallBack(res);
+            delete this.banners[params.adUnitId];
         });
         this.banners[params.adUnitId] = {
             bannerAd: bannerAd,
@@ -115,11 +122,12 @@ export class WechatAd extends FrameworkObject {
         };
     }
 
-    static showRewardedVideoAd(params: {
-            adUnitId: string,
-            finished: () => void,
-            unfinish: () => void,
-            errorCallBack?: (res: { errMsg: string, errCode: number })=> void }) {
+    public showRewardedVideoAd(params: {
+        adUnitId: string,
+        finished: () => void,
+        unfinish: () => void,
+        errorCallBack?: (res: { errMsg: string, errCode: number }) => void
+    }) {
         this.videoErrorCallback = params.errorCallBack;
         this.videoFinishedCallback = params.finished;
         this.videoUnfinishedCallback = params.unfinish;
@@ -131,12 +139,13 @@ export class WechatAd extends FrameworkObject {
         }
     }
 
-    protected static createRewardedVideoAd(params: { 
-            adUnitId: string,
-            multiton?: boolean }) {
+    protected createRewardedVideoAd(params: {
+        adUnitId: string,
+        multiton?: boolean
+    }) {
         this.videoAd = wx.createRewardedVideoAd({ adUnitId: params.adUnitId, multiton: params.multiton });
-        this.videoAd.onError((res: {errMsg: string, errCode: number}) => {
-            this.LOGE(this.TAG, "show video ad error : " + JSON.stringify(res));
+        this.videoAd.onError((res: { errMsg: string, errCode: number }) => {
+            Utils.LOGE(this.TAG, "show video ad error : " + JSON.stringify(res));
             this.videoAd.destroy();
             this.videoAd = null;
             typeof this.videoErrorCallback == "function" && this.videoErrorCallback(res);
@@ -156,10 +165,11 @@ export class WechatAd extends FrameworkObject {
         this.videoAd.load();
     }
 
-    static showInterstitialAd(params: {
-            adUnitId: string,
-            close?: () => void
-            errorCallBack?: (res: {errMsg: string, errCode: number})=> void }) {
+    public showInterstitialAd(params: {
+        adUnitId: string,
+        close?: () => void
+        errorCallBack?: (res: { errMsg: string, errCode: number }) => void
+    }) {
         this.interstitialCloseCallback = params.close;
         this.interstitialErrorCallback = params.errorCallBack;
         if (!cc.isValid(this.interstitialAd) || this.interstitialUnitId != params.adUnitId) {
@@ -170,11 +180,11 @@ export class WechatAd extends FrameworkObject {
         }
     }
 
-    protected static createInterstitialAd(params: { adUnitId: string }) {
-        this.interstitialAd = wx.createInterstitialAd({adUnitId: params.adUnitId});
-        this.interstitialAd.onError((res: {errMsg: string, errCode: number}) => {
+    protected createInterstitialAd(params: { adUnitId: string }) {
+        this.interstitialAd = wx.createInterstitialAd({ adUnitId: params.adUnitId });
+        this.interstitialAd.onError((res: { errMsg: string, errCode: number }) => {
             this.interstitialAd.destroy();
-            this.LOGE(this.TAG, "show interstitial ad error : " + JSON.stringify(res));
+            Utils.LOGE(this.TAG, "show interstitial ad error : " + JSON.stringify(res));
             typeof this.interstitialErrorCallback == "function" && this.interstitialErrorCallback(res)
         });
         let onLoadCallback = () => {
@@ -190,13 +200,14 @@ export class WechatAd extends FrameworkObject {
         this.interstitialAd.load();
     }
 
-    static showGridAd(params: {
-            adUnitId: string,
-            adTheme: "white" | "black",
-            gridCount: number,
-            style: { left: number, top: number, width: number, opacity: number },
-            resize?: (gridAd: wx.GridAd) => void,
-            errorCallback?: (res: {errMsg: string, errCode: number}) => void }) {
+    public showGridAd(params: {
+        adUnitId: string,
+        adTheme: "white" | "black",
+        gridCount: number,
+        style: { left: number, top: number, width: number, opacity: number },
+        resize?: (gridAd: wx.GridAd) => void,
+        errorCallback?: (res: { errMsg: string, errCode: number }) => void
+    }) {
         if (cc.isValid(this.grids[params.adUnitId])) {
             this.grids[params.adUnitId].show();
             return;
@@ -206,7 +217,7 @@ export class WechatAd extends FrameworkObject {
             return;
         }
         this.grids[params.adUnitId].onError((res: { errMsg: string, errCode: number }) => {
-            this.LOGE(this.TAG, "show grid ad error : " + JSON.stringify(res));
+            Utils.LOGE(this.TAG, "show grid ad error : " + JSON.stringify(res));
             this.grids[params.adUnitId].destroy();
             delete this.grids[params.adUnitId];
             typeof params.errorCallback == "function" && params.errorCallback(res);
@@ -217,28 +228,29 @@ export class WechatAd extends FrameworkObject {
         this.grids[params.adUnitId].show();
     }
 
-    static hideGridAd(adUnitId: string) {
+    public hideGridAd(adUnitId: string) {
         if (cc.isValid(this.grids[adUnitId])) {
             this.grids[adUnitId].hide();
         }
     }
 
-    static hideAllGridAds() {
+    public hideAllGridAds() {
         for (let key in this.grids) {
             this.hideGridAd(key);
         }
     }
 
-    static destroyGridAd(adUnitId: string) {
+    public destroyGridAd(adUnitId: string) {
         if (cc.isValid(this.grids[adUnitId])) {
             this.grids[adUnitId].destroy();
+            delete this.grids[adUnitId];
         }
     }
 
-    static destroyAllGridAds() {
+    public destroyAllGridAds() {
         for (let key in this.grids) {
             this.destroyGridAd(key);
         }
     }
-    
+
 }
